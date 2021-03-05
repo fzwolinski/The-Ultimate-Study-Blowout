@@ -1,7 +1,8 @@
-from smartstudent import *
+import sys
+from SmartStudent import *
 
 def main():
-  s = SmartStudent()
-
+  s = SmartStudent(sys.argv[1:])
+  
 if __name__ == "__main__":
   main()
