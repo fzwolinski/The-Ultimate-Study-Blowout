@@ -5,7 +5,8 @@ import win32gui
 import win32ui
 from ctypes import windll
 from PIL import Image
-from pathlib import Path
+import pathlib
+import time
 
 class SmartStudent:
   def __init__(self, flags=[]):
@@ -82,9 +83,12 @@ class SmartStudent:
     sys.exit(flags_message)
 
   def main_loop(self):
-    self.take_screenshot(self.config["window"], self.config["ss_path"])
+    for i in range(5):
+      self.take_screenshot(self.config["window"], self.config["ss_path"], str(i))
+      time.sleep(self.config["step"])
 
-  def take_screenshot(self, window, path):
+
+  def take_screenshot(self, window, path, img_name):
     # https://stackoverflow.com/a/24352388
 
     hwnd = win32gui.FindWindow(None, window)
@@ -121,7 +125,9 @@ class SmartStudent:
     mfcDC.DeleteDC()
     win32gui.ReleaseDC(hwnd, hwndDC)
 
-    ss_img = Path(path) / "ss.png"
-
+    pathlib.Path(path).mkdir(parents=True, exist_ok=True)
+    ss_img = path + "/" + (img_name + ".jpg")
+    
+    print(ss_img)
     if result == 1:
       im.save(ss_img)
