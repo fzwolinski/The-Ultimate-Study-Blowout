@@ -1,12 +1,20 @@
 import sys
 import json
 import pygetwindow
+import win32gui
+import win32ui
+from ctypes import windll
+from PIL import Image
+from pathlib import Path
 
 class SmartStudent:
   def __init__(self, flags=[]):
     if len(flags) > 0:
       self.handle_flags(flags)
     self.load_config()
+    # Window handle is necessary
+    self.check_window_attribute()
+    self.main_loop()
 
   def load_config(self):
     try:
@@ -18,6 +26,8 @@ class SmartStudent:
             "python main.py -w")
       self.config = self.default_config()
       self.write_config_to_file()
+      # We exit, because program can't run without specified window name
+      sys.exit()
 
   def write_config_to_file(self):
     with open('config.json', 'w') as f:
@@ -27,8 +37,16 @@ class SmartStudent:
     return  {
       "window": "",
       "step": 15,     # Take screenshot every 15s
-      "ss_path": "/"
+      "ss_path": ""
     }
+
+  def check_window_attribute(self):
+    if "window" not in self.config.keys():
+      sys.exit("Wrong window attribute.\n"
+        "Either check config file or run python main.py -w")
+    elif not self.config["window"] or not isinstance(self.config["window"], str):
+      sys.exit("Wrong window attribute.\n"
+        "Either check config file or [run python main.py -w]")
 
   def print_available_windows(self):
     print("\nThese are the names of the windows that are currently active. \n"
@@ -59,7 +77,51 @@ class SmartStudent:
       # TODO
       flags_message = ""
       
-
     # Flags are only for displaying information
     # We don't want to run screenshot program
     sys.exit(flags_message)
+
+  def main_loop(self):
+    self.take_screenshot(self.config["window"], self.config["ss_path"])
+
+  def take_screenshot(self, window, path):
+    # https://stackoverflow.com/a/24352388
+
+    hwnd = win32gui.FindWindow(None, window)
+    if hwnd == 0:
+      sys.exit("Wrong window name.\n"
+        "Check window names running [python main.py -w]")
+
+    left, top, right, bot = win32gui.GetClientRect(hwnd)
+    #left, top, right, bot = win32gui.GetWindowRect(hwnd)
+    w = right - left
+    h = bot - top
+
+    hwndDC = win32gui.GetWindowDC(hwnd)
+    mfcDC  = win32ui.CreateDCFromHandle(hwndDC)
+    saveDC = mfcDC.CreateCompatibleDC()
+
+    saveBitMap = win32ui.CreateBitmap()
+    saveBitMap.CreateCompatibleBitmap(mfcDC, w, h)
+
+    saveDC.SelectObject(saveBitMap)
+
+    result = windll.user32.PrintWindow(hwnd, saveDC.GetSafeHdc(), 3)
+    
+    bmpinfo = saveBitMap.GetInfo()
+    bmpstr = saveBitMap.GetBitmapBits(True)
+
+    im = Image.frombuffer(
+        'RGB',
+        (bmpinfo['bmWidth'], bmpinfo['bmHeight']),
+        bmpstr, 'raw', 'BGRX', 0, 1)
+
+    win32gui.DeleteObject(saveBitMap.GetHandle())
+    saveDC.DeleteDC()
+    mfcDC.DeleteDC()
+    win32gui.ReleaseDC(hwnd, hwndDC)
+
+    ss_img = Path(path) / "ss.png"
+
+    if result == 1:
+      im.save(ss_img)
