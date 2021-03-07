@@ -7,6 +7,8 @@ from ctypes import windll
 from PIL import Image
 import pathlib
 import time
+import numpy as np
+import cv2
 
 class SmartStudent:
   def __init__(self, flags=[]):
@@ -38,7 +40,8 @@ class SmartStudent:
     return  {
       "window": "",
       "step": 15,     # Take screenshot every 15s
-      "ss_path": ""
+      "ss_path": "",
+      "diff_percentage": 5
     }
 
   def check_window_attribute(self):
@@ -83,9 +86,31 @@ class SmartStudent:
     sys.exit(flags_message)
 
   def main_loop(self):
-    for i in range(5):
+    # TODO: Max images [ITERATIONS]
+    ITERATIONS = 5
+    i = 0
+    while True:
       self.take_screenshot(self.config["window"], self.config["ss_path"], str(i))
+      if i > 0:
+        img1 = self.config["ss_path"] + "/" + str(i-1) + ".jpg"
+        img2 = self.config["ss_path"] + "/" + str(i) + ".jpg"
+        print("Diff between {} and {} = {}%".format(img1, img2, self.percentage_diff_between_two_imgs(img1, img2)))
+        
+        # If difference between two images is too small, it means slide wasnt changed
+        # We want to delete this image in order not to have img duplicates
+        if self.percentage_diff_between_two_imgs(img1, img2) < int(self.config["diff_percentage"]):
+          try:
+            pathlib.Path(img2).unlink()
+          except:
+            pass
+          i -= 1
+
       time.sleep(self.config["step"])
+      i += 1
+
+      ITERATIONS -= 1
+      if ITERATIONS == 0:
+        sys.exit()
 
 
   def take_screenshot(self, window, path, img_name):
@@ -128,6 +153,12 @@ class SmartStudent:
     pathlib.Path(path).mkdir(parents=True, exist_ok=True)
     ss_img = path + "/" + (img_name + ".jpg")
     
-    print(ss_img)
     if result == 1:
       im.save(ss_img)
+
+  def percentage_diff_between_two_imgs(self, img1, img2):
+    img1, img2 = cv2.imread(img1, 0), cv2.imread(img2, 0)
+    diff = cv2.absdiff(img1, img2)
+    diff = diff.astype(np.uint8)
+    percentage_diff = (np.count_nonzero(diff) * 100) / diff.size
+    return percentage_diff
