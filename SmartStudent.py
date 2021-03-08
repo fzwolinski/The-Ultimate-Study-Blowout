@@ -7,8 +7,7 @@ from ctypes import windll
 from PIL import Image
 import pathlib
 import time
-import numpy as np
-import cv2
+import imgcompare
 
 class SmartStudent:
   def __init__(self, flags=[]):
@@ -38,28 +37,28 @@ class SmartStudent:
 
   def default_config(self):
     return  {
-      "window": "",
+      "window_id": 0,
       "step": 15,     # Take screenshot every 15s
-      "ss_path": "",
+      "ss_path": "imgs",
       "diff_percentage": 5
     }
 
   def check_window_attribute(self):
-    if "window" not in self.config.keys():
+    if "window_id" not in self.config.keys():
       sys.exit("Wrong window attribute.\n"
         "Either check config file or run python main.py -w")
-    elif not self.config["window"] or not isinstance(self.config["window"], str):
+    elif not self.config["window_id"] or not isinstance(self.config["window_id"], int):
       sys.exit("Wrong window attribute.\n"
         "Either check config file or [run python main.py -w]")
 
   def print_available_windows(self):
-    print("\nThese are the names of the windows that are currently active. \n"
-      "Copy name of window whose screenshots you will be saving and paste it to Your config file.\n"
-      "Example (in config file):\n\"window\": \"Microsoft Teams\",")
+    print("\nThese are the ID's and names of the windows that are currently active. \n"
+      "Copy ID of window whose screenshots you will be saving and paste it to Your config file.\n"
+      "Example (in config file):\n\"window_id\": 328696,")
     print("----------------------------------")
     for title in pygetwindow.getAllTitles():
       if title:
-        print(title)
+        print("ID: {}\t{}".format(pygetwindow.getWindowsWithTitle(title)[0]._hWnd, title))
     print("----------------------------------")
 
   def flags_description(self):
@@ -87,13 +86,18 @@ class SmartStudent:
 
   def main_loop(self):
     # TODO: Max images [ITERATIONS]
-    ITERATIONS = 5
+    ITERATIONS = 99999999
     i = 0
     while True:
-      self.take_screenshot(self.config["window"], self.config["ss_path"], str(i))
+      self.take_screenshot(self.config["window_id"], self.config["ss_path"], str(i))
       if i > 0:
-        img1 = self.config["ss_path"] + "/" + str(i-1) + ".jpg"
-        img2 = self.config["ss_path"] + "/" + str(i) + ".jpg"
+        if self.config["ss_path"]:
+          img1 = self.config["ss_path"] + "/" + str(i-1) + ".jpg"
+          img2 = self.config["ss_path"] + "/" + str(i) + ".jpg"
+        else:
+          img1 = str(i-1) + ".jpg"
+          img2 = str(i) + ".jpg"
+
         print("Diff between {} and {} = {}%".format(img1, img2, self.percentage_diff_between_two_imgs(img1, img2)))
         
         # If difference between two images is too small, it means slide wasnt changed
@@ -116,9 +120,10 @@ class SmartStudent:
   def take_screenshot(self, window, path, img_name):
     # https://stackoverflow.com/a/24352388
 
-    hwnd = win32gui.FindWindow(None, window)
+    #hwnd = win32gui.FindWindow(None, "window")
+    hwnd = window
     if hwnd == 0:
-      sys.exit("Wrong window name.\n"
+      sys.exit("Wrong window ID.\n"
         "Check window names running [python main.py -w]")
 
     left, top, right, bot = win32gui.GetClientRect(hwnd)
@@ -151,14 +156,14 @@ class SmartStudent:
     win32gui.ReleaseDC(hwnd, hwndDC)
 
     pathlib.Path(path).mkdir(parents=True, exist_ok=True)
-    ss_img = path + "/" + (img_name + ".jpg")
-    
+
+    if path:
+      ss_img = path + "/" + (img_name + ".jpg")
+    else:
+      ss_img = img_name + ".jpg"
+
     if result == 1:
       im.save(ss_img)
 
   def percentage_diff_between_two_imgs(self, img1, img2):
-    img1, img2 = cv2.imread(img1, 0), cv2.imread(img2, 0)
-    diff = cv2.absdiff(img1, img2)
-    diff = diff.astype(np.uint8)
-    percentage_diff = (np.count_nonzero(diff) * 100) / diff.size
-    return percentage_diff
+    return imgcompare.image_diff_percent(Image.open(img1), Image.open(img2))
