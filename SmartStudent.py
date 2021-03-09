@@ -128,7 +128,12 @@ class SmartStudent:
       sys.exit("Wrong window ID.\n"
         "Check window names running [python main.py -w]")
 
-    left, top, right, bot = win32gui.GetClientRect(hwnd)
+    try:
+      left, top, right, bot = win32gui.GetClientRect(hwnd)
+    except:
+      sys.exit("Wrong window ID.\n"
+        "Check window names running [python main.py -w]")
+  
     #left, top, right, bot = win32gui.GetWindowRect(hwnd)
     w = right - left
     h = bot - top
@@ -171,6 +176,16 @@ class SmartStudent:
     return imgcompare.image_diff_percent(Image.open(img1), Image.open(img2))
 
   def start_img_number(self, path):
+    """
+    As we start program, we don't want to just start
+    saving screenshots from like 0.jpg, 1.jpg...
+    because they will overwrite any screenshots previously taken.
+    start_img_number returns the number of the photo 
+    from which we start taking screenshots
+
+    0 <- start with 0.jpg
+    """
+
     img_names = []
 
     try:
