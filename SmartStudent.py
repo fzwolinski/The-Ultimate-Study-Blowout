@@ -8,6 +8,7 @@ from PIL import Image
 import pathlib
 import time
 import imgcompare
+import os
 
 class SmartStudent:
   def __init__(self, flags=[]):
@@ -87,7 +88,8 @@ class SmartStudent:
   def main_loop(self):
     # TODO: Max images [ITERATIONS]
     ITERATIONS = 99999999
-    i = 0
+    i = self.start_img_number(self.config["ss_path"])
+    print("Starting with {}.jpg\n".format(i))
     while True:
       self.take_screenshot(self.config["window_id"], self.config["ss_path"], str(i))
       if i > 0:
@@ -102,7 +104,7 @@ class SmartStudent:
         
         # If difference between two images is too small, it means slide wasnt changed
         # We want to delete this image in order not to have img duplicates
-        if self.percentage_diff_between_two_imgs(img1, img2) < int(self.config["diff_percentage"]):
+        if self.percentage_diff_between_two_imgs(img1, img2) < float(self.config["diff_percentage"]):
           try:
             pathlib.Path(img2).unlink()
           except:
@@ -167,3 +169,19 @@ class SmartStudent:
 
   def percentage_diff_between_two_imgs(self, img1, img2):
     return imgcompare.image_diff_percent(Image.open(img1), Image.open(img2))
+
+  def start_img_number(self, path):
+    img_names = []
+
+    try:
+      for file in os.listdir(path):
+          if file.endswith(".jpg"):
+            img_names.append(int(file.replace(".jpg", "")))
+      if img_names:
+        img_names.sort()
+        return img_names[-1] + 1
+      else:
+        return 0
+
+    except:
+      return 0
