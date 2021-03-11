@@ -100,7 +100,7 @@ class SmartStudent:
           img1 = str(i-1) + ".jpg"
           img2 = str(i) + ".jpg"
 
-        print("Diff between {} and {} = {}%".format(img1, img2, self.percentage_diff_between_two_imgs(img1, img2)))
+        print("Diff between {} and {} = {:.5f}%".format(img1, img2, self.percentage_diff_between_two_imgs(img1, img2)))
         
         # If difference between two images is too small, it means slide wasnt changed
         # We want to delete this image in order not to have img duplicates
@@ -173,6 +173,12 @@ class SmartStudent:
       im.save(ss_img)
 
   def percentage_diff_between_two_imgs(self, img1, img2):
+    # Check if resolution of both images are the same
+    # If not, we can not compare them
+    i1, i2 = Image.open(img1), Image.open(img2)
+    if not (i1.size == i2.size):
+      return 1
+
     return imgcompare.image_diff_percent(Image.open(img1), Image.open(img2))
 
   def start_img_number(self, path):
