@@ -12,6 +12,7 @@ import os
 
 class SmartStudent:
   def __init__(self, flags=[]):
+    self.display_flags_description()
     if len(flags) > 0:
       self.handle_flags(flags)
     self.load_config()
@@ -39,9 +40,9 @@ class SmartStudent:
   def default_config(self):
     return  {
       "window_id": 0,
-      "step": 15,     # Take screenshot every 15s
+      "step": 10,     # Take screenshot every 15s
       "ss_path": "imgs",
-      "diff_percentage": 5
+      "diff_percentage": 0.9
     }
 
   def check_window_attribute(self):
@@ -52,8 +53,17 @@ class SmartStudent:
       sys.exit("Wrong window attribute.\n"
         "Either check config file or [run python main.py -w]")
 
+  def handle_flags(self, f):
+    if "-w" in f:
+      self.print_available_windows()
+    if "-t" in f:
+      # TODO
+      self.take_test_screenshot()
+
+    sys.exit()
+
   def print_available_windows(self):
-    print("\nThese are the ID's and names of the windows that are currently active. \n"
+    print("These are the ID's and names of the windows that are currently active. \n"
       "Copy ID of window whose screenshots you will be saving and paste it to Your config file.\n"
       "Example (in config file):\n\"window_id\": 328696,")
     print("----------------------------------")
@@ -62,28 +72,24 @@ class SmartStudent:
         print("ID: {}\t{}".format(pygetwindow.getWindowsWithTitle(title)[0]._hWnd, title))
     print("----------------------------------")
 
-  def flags_description(self):
-    return """Available flags
-  -w\tdisplay active windows
-  -t\ttest screenshot
-\nexample: python main.py -w
-    """
+  def display_flags_description(self):
+    print("Available flags\n"
+          "-w\tdisplay active windows\n"
+          "-t\ttest screenshot"
+          "\nexample: python main.py -w\n"
+          "\n----------------------------------\n"
+    )
 
-  def handle_flags(self, f):
-    # If none of the flags provided is valid,
-    # we want to inform user about it
-    flags_message = self.flags_description()
-    
-    if "-w" in f:
-      self.print_available_windows()
-      flags_message = ""
-    if "-t" in f:
-      # TODO
-      flags_message = ""
-      
-    # Flags are only for displaying information
-    # We don't want to run screenshot program
-    sys.exit(flags_message)
+  def take_test_screenshot(self):
+    self.load_config()
+    self.check_window_attribute()
+    self.take_screenshot(self.config["window_id"], self.config["ss_path"], "test")
+    print("Test screenshot:\n"
+          "IMG Name: test.jpg\n"
+          "Path: {}\n"
+          "Window ID: {}\n"
+          .format(self.config["ss_path"], self.config["window_id"])
+    )
 
   def main_loop(self):
     # TODO: Max images [ITERATIONS]
