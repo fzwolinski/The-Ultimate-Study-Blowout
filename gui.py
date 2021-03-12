@@ -61,7 +61,7 @@ run_program_btn.place(relx=0.5, rely=0.2, anchor=CENTER, width=230, height=70)
 output_text = StringVar()
 output_text.set("Output Here")
 output_label = Label(home_frame, textvariable=output_text, borderwidth=4, relief="ridge", bg="white")
-output_label.place(rely=0.85, relx=0.5, height=180, width=SCREEN_WIDTH+8, anchor=CENTER)
+output_label.place(rely=1+0.01 , relx=0.5, height=180, width=SCREEN_WIDTH+8, anchor=S)
 
 ########################################
 
