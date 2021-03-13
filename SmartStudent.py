@@ -11,14 +11,12 @@ import imgcompare
 import os
 
 class SmartStudent:
-  def __init__(self, flags=[]):
-    self.display_flags_description()
-    if len(flags) > 0:
-      self.handle_flags(flags)
+  def __init__(self):
+    self.output = ""
     self.load_config()
     # Window handle is necessary
     self.check_window_attribute()
-    self.main_loop()
+    #self.main_loop()
 
   def load_config(self):
     try:
@@ -26,12 +24,9 @@ class SmartStudent:
         self.config = json.load(f)
     except:
       print("Error opening config file. File may be missing or may be empty.")
-      print("Loading default config. You must specify SCREENSHOT WINDOW by running\n"
-            "python main.py -w")
+      print("Loading default config. You must specify SCREENSHOT WINDOW in Config Tab\n")
       self.config = self.default_config()
       self.write_config_to_file()
-      # We exit, because program can't run without specified window name
-      sys.exit()
 
   def write_config_to_file(self):
     with open('config.json', 'w') as f:
@@ -47,20 +42,10 @@ class SmartStudent:
 
   def check_window_attribute(self):
     if "window_id" not in self.config.keys():
-      sys.exit("Wrong window attribute.\n"
-        "Either check config file or run python main.py -w")
+      print("Wrong window attribute. Check Config Tab")
     elif not self.config["window_id"] or not isinstance(self.config["window_id"], int):
-      sys.exit("Wrong window attribute.\n"
-        "Either check config file or [run python main.py -w]")
+      print("Wrong window attribute. Check Config Tab")
 
-  def handle_flags(self, f):
-    if "-w" in f:
-      self.print_available_windows()
-    if "-t" in f:
-      # TODO
-      self.take_test_screenshot()
-
-    sys.exit()
 
   def print_available_windows(self):
     print("These are the ID's and names of the windows that are currently active. \n"
@@ -72,24 +57,16 @@ class SmartStudent:
         print("ID: {}\t{}".format(pygetwindow.getWindowsWithTitle(title)[0]._hWnd, title))
     print("----------------------------------")
 
-  def display_flags_description(self):
-    print("Available flags\n"
-          "-w\tdisplay active windows\n"
-          "-t\ttest screenshot"
-          "\nexample: python main.py -w\n"
-          "\n----------------------------------\n"
-    )
-
   def take_test_screenshot(self):
     self.load_config()
     self.check_window_attribute()
-    self.take_screenshot(self.config["window_id"], self.config["ss_path"], "test")
-    print("Test screenshot:\n"
-          "IMG Name: test.jpg\n"
-          "Path: {}\n"
-          "Window ID: {}\n"
-          .format(self.config["ss_path"], self.config["window_id"])
-    )
+    if self.take_screenshot(self.config["window_id"], self.config["ss_path"], "test") != -1:
+      print("Test screenshot:\n"
+            "IMG Name: test.jpg\n"
+            "Path: {}\n"
+            "Window ID: {}\n"
+            .format(self.config["ss_path"], self.config["window_id"])
+      )
 
   def main_loop(self):
     # TODO: Max images [ITERATIONS]
@@ -131,14 +108,14 @@ class SmartStudent:
     #hwnd = win32gui.FindWindow(None, "window")
     hwnd = window
     if hwnd == 0:
-      sys.exit("Wrong window ID.\n"
-        "Check window names running [python main.py -w]")
+      print("Wrong window ID.\n")
+      return -1
 
     try:
       left, top, right, bot = win32gui.GetClientRect(hwnd)
     except:
-      sys.exit("Wrong window ID.\n"
-        "Check window names running [python main.py -w]")
+      print("Wrong window ID.\n")
+      return -1
   
     #left, top, right, bot = win32gui.GetWindowRect(hwnd)
     w = right - left

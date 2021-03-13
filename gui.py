@@ -1,4 +1,5 @@
 from tkinter import *
+from SmartStudent import *
 import time
 
 SCREEN_WIDTH = 900
@@ -12,6 +13,8 @@ root = Tk()
 root.title("SmartStudent")
 root.geometry(f"{SCREEN_WIDTH}x{SCREEN_HEIGHT}") 
 root.resizable(False,False)
+
+ss = SmartStudent()
 
 # Change Main View
 def set_home_page():
@@ -42,11 +45,10 @@ home_frame.pack()
 config_frame = Frame(root, width=SCREEN_WIDTH, height=SCREEN_HEIGHT-MENU_HEIGHT, bg=MAIN_BG)
 ############
 
-################# Home Page ############
+############ Home Page ############
 
 def take_screenshot():
-  # TODO
-  print("Taking screenshot")
+  ss.take_test_screenshot()
 
 def run_program():
   # TODO
@@ -59,12 +61,35 @@ run_program_btn = Button(home_frame, text="Run!", command=run_program)
 run_program_btn.place(relx=0.5, rely=0.2, anchor=CENTER, width=230, height=70)
 
 output_text = StringVar()
-output_text.set("Output Here")
+
 output_label = Label(home_frame, textvariable=output_text, borderwidth=4, relief="ridge", bg="white")
 output_label.place(rely=1+0.01 , relx=0.5, height=180, width=SCREEN_WIDTH+8, anchor=S)
 
-########################################
+###################################
 
+############ Config Page ############
+
+config_window_id_label = Label(config_frame, text="Window ID").place(relx=0.05, rely=0.08)
+config_window_id_entry = Entry(config_frame)
+config_window_id_entry.insert(0, ss.config["window_id"])
+config_window_id_entry.place(relx=0.25, rely=0.08)
+
+config_step_label = Label(config_frame, text="Step").place(relx=0.05, rely=0.08+0.08)
+config_step_entry = Entry(config_frame)
+config_step_entry.insert(0, ss.config["step"])
+config_step_entry.place(relx=0.25, rely=0.08+0.08)
+
+config_ss_path_label = Label(config_frame, text="Path").place(relx=0.05, rely=0.08+0.08+0.08)
+config_ss_path_entry = Entry(config_frame)
+config_ss_path_entry.insert(0, ss.config["ss_path"])
+config_ss_path_entry.place(relx=0.25, rely=0.08+0.08+0.08)
+
+config_diff_perc_label = Label(config_frame, text="Percentage difference").place(relx=0.05, rely=0.08+0.08+0.08+0.08)
+config_diff_perc_entry = Entry(config_frame)
+config_diff_perc_entry.insert(0, ss.config["diff_percentage"])
+config_diff_perc_entry.place(relx=0.25, rely=0.08+0.08+0.08+0.08)
+
+###################################
 
 
 root.mainloop()
