@@ -15,6 +15,9 @@ root.title("SmartStudent")
 root.geometry(f"{SCREEN_WIDTH}x{SCREEN_HEIGHT}") 
 root.resizable(False,False)
 
+ss_click_time = -2
+save_config_click_time = -2
+
 ss = SmartStudent()
 
 # Change Main View
@@ -49,7 +52,10 @@ config_frame = Frame(root, width=SCREEN_WIDTH, height=SCREEN_HEIGHT-MENU_HEIGHT,
 ############ Home Page ############
 
 def take_screenshot():
-  ss.take_test_screenshot()
+  global ss_click_time
+  if (time.perf_counter() - ss_click_time) > 2:
+    ss_click_time = time.perf_counter()
+    ss.take_test_screenshot()
 
 def run_program():
   ss.main_loop()
@@ -87,6 +93,12 @@ def set_path():
   path.set(path_dir)
 
 def save_config():
+  global save_config_click_time
+  if (time.perf_counter() - save_config_click_time) < 2:
+    return
+  save_config_click_time = time.perf_counter()
+  print("saving")
+
   if validate_config():
     new_config = {
       "window_id": int(list(windows.keys())[list(windows.values()).index(clicked_window.get())]),
