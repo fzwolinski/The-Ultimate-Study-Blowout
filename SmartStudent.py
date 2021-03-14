@@ -28,9 +28,13 @@ class SmartStudent:
       self.config = self.default_config()
       self.write_config_to_file()
 
-  def write_config_to_file(self):
-    with open('config.json', 'w') as f:
-      json.dump(self.config, f)
+  def write_config_to_file(self, c):
+    try: 
+      with open('config.json', 'w') as f:
+        json.dump(c, f)
+      return 1
+    except:
+      return 0
 
   def default_config(self):
     return  {
@@ -47,15 +51,18 @@ class SmartStudent:
       print("Wrong window attribute. Check Config Tab")
 
 
-  def print_available_windows(self):
-    print("These are the ID's and names of the windows that are currently active. \n"
-      "Copy ID of window whose screenshots you will be saving and paste it to Your config file.\n"
-      "Example (in config file):\n\"window_id\": 328696,")
-    print("----------------------------------")
+  def available_windows(self):
+    #print("These are the ID's and names of the windows that are currently active. \n"
+    #  "Copy ID of window whose screenshots you will be saving and paste it to Your config file.\n"
+    #  "Example (in config file):\n\"window_id\": 328696,")
+    #print("----------------------------------")
+    windows = {}
     for title in pygetwindow.getAllTitles():
       if title:
-        print("ID: {}\t{}".format(pygetwindow.getWindowsWithTitle(title)[0]._hWnd, title))
-    print("----------------------------------")
+        windows[str(pygetwindow.getWindowsWithTitle(title)[0]._hWnd)] = title 
+        #print("ID: {}\t{}".format(pygetwindow.getWindowsWithTitle(title)[0]._hWnd, title))
+    return windows
+    #print("----------------------------------")
 
   def take_test_screenshot(self):
     self.load_config()
@@ -148,7 +155,8 @@ class SmartStudent:
     pathlib.Path(path).mkdir(parents=True, exist_ok=True)
 
     if path:
-      ss_img = path + "/" + (img_name + ".jpg")
+      #ss_img = path + "/" + (img_name + ".jpg")
+      ss_img = pathlib.Path(path) / (img_name + ".jpg")
     else:
       ss_img = img_name + ".jpg"
 

@@ -1,3 +1,4 @@
+from tkinter import filedialog
 from tkinter import *
 from SmartStudent import *
 import time
@@ -68,26 +69,89 @@ output_label.place(rely=1+0.01 , relx=0.5, height=180, width=SCREEN_WIDTH+8, anc
 ###################################
 
 ############ Config Page ############
+windows = ss.available_windows()
+window_names = [x for x in windows.values()]
+clicked_window = StringVar()
+clicked_window.set(windows[str(ss.config["window_id"])])
+
+path = StringVar()
+path.set(ss.config["ss_path"])
+
+step_validate = StringVar()
+diff_perc_validate = StringVar()
+
+save_file_success = StringVar()
+
+def set_path():
+  path_dir = filedialog.askdirectory()
+  path.set(path_dir)
+
+def save_config():
+  if validate_config():
+    new_config = {
+      "window_id": int(list(windows.keys())[list(windows.values()).index(clicked_window.get())]),
+      "step": int(config_step_entry.get()),
+      "ss_path": path.get(), 
+      "diff_percentage": float(config_diff_perc_entry.get())
+    }
+  if ss.write_config_to_file(new_config):
+    save_file_success.set("Saved!")
+    ss.config = new_config
+  else:
+    save_file_success.set("Error!")
+
+  print(ss.config)
+
+def validate_config():
+  correct_values = True
+  try:
+    step = int(config_step_entry.get())
+    if step > 0:
+      step_validate.set("Good")
+    else:
+      step_validate.set("Wrong Value!")
+  except:
+    step_validate.set("Wrong Value!")
+    correct_values = False
+
+  try:
+    diff_perc = float(config_diff_perc_entry.get())
+    if diff_perc >= 0 and diff_perc <= 1:
+      diff_perc_validate.set("Good")
+    else:
+      diff_perc_validate.set("Wrong Value!")
+  except:
+    diff_perc_validate.set("Wrong Value!")
+    correct_values = False
+
+  return correct_values
 
 config_window_id_label = Label(config_frame, text="Window ID").place(relx=0.05, rely=0.08)
-config_window_id_entry = Entry(config_frame)
-config_window_id_entry.insert(0, ss.config["window_id"])
-config_window_id_entry.place(relx=0.25, rely=0.08)
+config_window_id_op_menu = OptionMenu(config_frame, clicked_window, *window_names)
+config_window_id_op_menu.place(relx=0.25, rely=0.08)
 
 config_step_label = Label(config_frame, text="Step").place(relx=0.05, rely=0.08+0.08)
 config_step_entry = Entry(config_frame)
 config_step_entry.insert(0, ss.config["step"])
 config_step_entry.place(relx=0.25, rely=0.08+0.08)
+config_step_validate_label = Label(config_frame, textvariable=step_validate).place(relx=0.4, rely=0.08+0.08)
 
 config_ss_path_label = Label(config_frame, text="Path").place(relx=0.05, rely=0.08+0.08+0.08)
-config_ss_path_entry = Entry(config_frame)
-config_ss_path_entry.insert(0, ss.config["ss_path"])
+config_ss_path_entry = Button(config_frame, text="Select Path!", command=set_path)
 config_ss_path_entry.place(relx=0.25, rely=0.08+0.08+0.08)
+
+config_ss_current_path_label = Label(config_frame, textvariable=path).place(relx=0.4, rely=0.08+0.08+0.08)
 
 config_diff_perc_label = Label(config_frame, text="Percentage difference").place(relx=0.05, rely=0.08+0.08+0.08+0.08)
 config_diff_perc_entry = Entry(config_frame)
 config_diff_perc_entry.insert(0, ss.config["diff_percentage"])
 config_diff_perc_entry.place(relx=0.25, rely=0.08+0.08+0.08+0.08)
+config_diff_perc_validate_label = Label(config_frame, textvariable=diff_perc_validate).place(relx=0.4, rely=0.08+0.08+0.08+0.08)
+
+config_save = Button(config_frame, text="Save", command=save_config)
+config_save.place(relx=0.25, rely=0.08+0.08+0.08+0.08+0.08+0.08)
+
+save_file_success_info = Label(config_frame, textvariable=save_file_success).place(relx=0.25, rely=0.08+0.08+0.08+0.08+0.08+0.08+0.08)
 
 ###################################
 
