@@ -51,6 +51,10 @@ config_frame = Frame(root, width=SCREEN_WIDTH, height=SCREEN_HEIGHT-MENU_HEIGHT,
 
 ############ Home Page ############
 
+run_stop = StringVar()
+run_stop.set("Run!")
+running = False
+
 def take_screenshot():
   global ss_click_time
   if (time.perf_counter() - ss_click_time) > 2:
@@ -58,13 +62,22 @@ def take_screenshot():
     ss.take_test_screenshot()
 
 def run_program():
-  ss.main_loop()
-  print("Running program")
+  global running
+  if not running:
+    running = True
+    run_stop.set("Stop!")
+    ss.run()
+    print("Running program")
+  else:
+    running = False
+    run_stop.set("Run!")
+    ss.stop_program()
+    print("Stopped")
 
 take_screenshot_btn = Button(home_frame, text="Test Screenshot", command=take_screenshot)
 take_screenshot_btn.place(relx=0.07, rely=0.1, width=120, height=40)
 
-run_program_btn = Button(home_frame, text="Run!", command=run_program)
+run_program_btn = Button(home_frame, textvariable=run_stop, command=run_program)
 run_program_btn.place(relx=0.5, rely=0.2, anchor=CENTER, width=230, height=70)
 
 output_text = StringVar()
@@ -164,5 +177,11 @@ config_save.place(relx=0.28, rely=0.08+0.08+0.08+0.08+0.08+0.08)
 save_file_success_info = Label(config_frame, textvariable=save_file_success).place(relx=0.28, rely=0.08+0.08+0.08+0.08+0.08+0.08+0.08)
 
 ###################################
+
+def on_window_close():
+  ss.stop_program()
+  root.destroy()
+
+root.protocol("WM_DELETE_WINDOW", on_window_close)
 
 root.mainloop()

@@ -9,6 +9,7 @@ import pathlib
 import time
 import imgcompare
 import os
+import threading
 
 class SmartStudent:
   def __init__(self):
@@ -17,6 +18,7 @@ class SmartStudent:
     # Window handle is necessary
     self.check_window_attribute()
     #self.main_loop()
+    self.stop = False
 
   def load_config(self):
     try:
@@ -74,9 +76,16 @@ class SmartStudent:
             .format(self.config["ss_path"], self.config["window_id"])
       )
 
+  def run(self):
+    self.stop = False
+    run_thread = threading.Thread(target=self.main_loop)
+    run_thread.start()
+
+  def stop_program(self):
+    self.stop = True
+
   def main_loop(self):
     # TODO: Max images [ITERATIONS]
-    ITERATIONS = 99999999
     i = self.start_img_number(self.config["ss_path"])
     print("Starting with {}.jpg\n".format(i))
     while True:
@@ -103,9 +112,8 @@ class SmartStudent:
       time.sleep(self.config["step"])
       i += 1
 
-      ITERATIONS -= 1
-      if ITERATIONS == 0:
-        sys.exit()
+      if self.stop:
+        return
 
 
   def take_screenshot(self, window, path, img_name):
