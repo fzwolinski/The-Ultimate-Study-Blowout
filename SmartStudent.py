@@ -60,7 +60,6 @@ class SmartStudent:
     for title in pygetwindow.getAllTitles():
       if title:
         windows[str(pygetwindow.getWindowsWithTitle(title)[0]._hWnd)] = title 
-        #print("ID: {}\t{}".format(pygetwindow.getWindowsWithTitle(title)[0]._hWnd, title))
     return windows
     #print("----------------------------------")
 
@@ -84,8 +83,8 @@ class SmartStudent:
       self.take_screenshot(self.config["window_id"], self.config["ss_path"], str(i))
       if i > 0:
         if self.config["ss_path"]:
-          img1 = self.config["ss_path"] + "/" + str(i-1) + ".jpg"
-          img2 = self.config["ss_path"] + "/" + str(i) + ".jpg"
+          img1 = pathlib.Path(self.config["ss_path"]) / (str(i-1) + ".jpg")
+          img2 = pathlib.Path(self.config["ss_path"]) / (str(i) + ".jpg")
         else:
           img1 = str(i-1) + ".jpg"
           img2 = str(i) + ".jpg"
@@ -170,7 +169,7 @@ class SmartStudent:
     if not (i1.size == i2.size):
       return 1
 
-    return imgcompare.image_diff_percent(Image.open(img1), Image.open(img2))
+    return imgcompare.image_diff_percent(i1, i2)
 
   def start_img_number(self, path):
     """

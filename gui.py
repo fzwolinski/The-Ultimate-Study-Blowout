@@ -52,7 +52,7 @@ def take_screenshot():
   ss.take_test_screenshot()
 
 def run_program():
-  # TODO
+  ss.main_loop()
   print("Running program")
 
 take_screenshot_btn = Button(home_frame, text="Test Screenshot", command=take_screenshot)
@@ -100,8 +100,6 @@ def save_config():
   else:
     save_file_success.set("Error!")
 
-  print(ss.config)
-
 def validate_config():
   correct_values = True
   try:
@@ -116,7 +114,7 @@ def validate_config():
 
   try:
     diff_perc = float(config_diff_perc_entry.get())
-    if diff_perc >= 0 and diff_perc <= 1:
+    if diff_perc >= 0 and diff_perc <= 100:
       diff_perc_validate.set("Good")
     else:
       diff_perc_validate.set("Wrong Value!")
@@ -128,48 +126,31 @@ def validate_config():
 
 config_window_id_label = Label(config_frame, text="Window ID").place(relx=0.05, rely=0.08)
 config_window_id_op_menu = OptionMenu(config_frame, clicked_window, *window_names)
-config_window_id_op_menu.place(relx=0.25, rely=0.08)
+config_window_id_op_menu.place(relx=0.28, rely=0.08)
 
 config_step_label = Label(config_frame, text="Step").place(relx=0.05, rely=0.08+0.08)
 config_step_entry = Entry(config_frame)
 config_step_entry.insert(0, ss.config["step"])
-config_step_entry.place(relx=0.25, rely=0.08+0.08)
-config_step_validate_label = Label(config_frame, textvariable=step_validate).place(relx=0.4, rely=0.08+0.08)
+config_step_entry.place(relx=0.28, rely=0.08+0.08)
+config_step_validate_label = Label(config_frame, textvariable=step_validate).place(relx=0.43, rely=0.08+0.08)
 
 config_ss_path_label = Label(config_frame, text="Path").place(relx=0.05, rely=0.08+0.08+0.08)
 config_ss_path_entry = Button(config_frame, text="Select Path!", command=set_path)
-config_ss_path_entry.place(relx=0.25, rely=0.08+0.08+0.08)
+config_ss_path_entry.place(relx=0.28, rely=0.08+0.08+0.08)
 
-config_ss_current_path_label = Label(config_frame, textvariable=path).place(relx=0.4, rely=0.08+0.08+0.08)
+config_ss_current_path_label = Label(config_frame, textvariable=path).place(relx=0.43, rely=0.08+0.08+0.08)
 
-config_diff_perc_label = Label(config_frame, text="Percentage difference").place(relx=0.05, rely=0.08+0.08+0.08+0.08)
+config_diff_perc_label = Label(config_frame, text="Percentage difference  [0.0; 100.0]").place(relx=0.05, rely=0.08+0.08+0.08+0.08)
 config_diff_perc_entry = Entry(config_frame)
 config_diff_perc_entry.insert(0, ss.config["diff_percentage"])
-config_diff_perc_entry.place(relx=0.25, rely=0.08+0.08+0.08+0.08)
-config_diff_perc_validate_label = Label(config_frame, textvariable=diff_perc_validate).place(relx=0.4, rely=0.08+0.08+0.08+0.08)
+config_diff_perc_entry.place(relx=0.28, rely=0.08+0.08+0.08+0.08)
+config_diff_perc_validate_label = Label(config_frame, textvariable=diff_perc_validate).place(relx=0.43, rely=0.08+0.08+0.08+0.08)
 
 config_save = Button(config_frame, text="Save", command=save_config)
-config_save.place(relx=0.25, rely=0.08+0.08+0.08+0.08+0.08+0.08)
+config_save.place(relx=0.28, rely=0.08+0.08+0.08+0.08+0.08+0.08)
 
-save_file_success_info = Label(config_frame, textvariable=save_file_success).place(relx=0.25, rely=0.08+0.08+0.08+0.08+0.08+0.08+0.08)
+save_file_success_info = Label(config_frame, textvariable=save_file_success).place(relx=0.28, rely=0.08+0.08+0.08+0.08+0.08+0.08+0.08)
 
 ###################################
 
-
 root.mainloop()
-
-
-
-"""
-- Start programu
-
-- Flagi: -w -t...
-
-Config:
-  - Inputy z wartosciami configu
-  - Save config button 
-
-
-
-
-"""
