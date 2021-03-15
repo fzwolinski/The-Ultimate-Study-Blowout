@@ -104,7 +104,8 @@ output_label.place(rely=1+0.01 , relx=0.5, height=180, width=SCREEN_WIDTH+8, anc
 windows = ss.available_windows()
 window_names = [x for x in windows.values()]
 clicked_window = StringVar()
-if ss.config["window_id"] in windows.keys():
+if str(ss.config["window_id"]) in windows.keys():
+  print("In")
   clicked_window.set(windows[str(ss.config["window_id"])])
 else:
   clicked_window.set(window_names[0])
