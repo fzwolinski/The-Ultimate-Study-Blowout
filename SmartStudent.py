@@ -175,7 +175,7 @@ class SmartStudent:
     # If not, we can not compare them
     i1, i2 = Image.open(img1), Image.open(img2)
     if not (i1.size == i2.size):
-      return 1
+      return 100
 
     return imgcompare.image_diff_percent(i1, i2)
 

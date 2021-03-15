@@ -64,15 +64,14 @@ def take_screenshot():
 def run_program():
   global running
   if not running:
-    running = True
     run_stop.set("Stop!")
     ss.run()
     print("Running program")
   else:
-    running = False
     run_stop.set("Run!")
     ss.stop_program()
     print("Stopped")
+  running = not running
 
 take_screenshot_btn = Button(home_frame, text="Test Screenshot", command=take_screenshot)
 take_screenshot_btn.place(relx=0.07, rely=0.1, width=120, height=40)
@@ -91,7 +90,10 @@ output_label.place(rely=1+0.01 , relx=0.5, height=180, width=SCREEN_WIDTH+8, anc
 windows = ss.available_windows()
 window_names = [x for x in windows.values()]
 clicked_window = StringVar()
-clicked_window.set(windows[str(ss.config["window_id"])])
+if ss.config["window_id"] in windows.keys():
+  clicked_window.set(windows[str(ss.config["window_id"])])
+else:
+  clicked_window.set(window_names[0])
 
 path = StringVar()
 path.set(ss.config["ss_path"])
