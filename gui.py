@@ -65,14 +65,27 @@ def take_screenshot():
 def run_program():
   global running
   if not running:
+    disable_buttons_on_running()
     run_stop.set("Stop!")
     ss.run()
     print("Running program")
   else:
+    enable_buttons_on_stop()
     run_stop.set("Run!")
     ss.stop_program()
     print("Stopped")
   running = not running
+
+def enable_buttons_on_stop():
+  take_screenshot_btn["state"] = "normal"
+  main_home_btn["state"] = "normal"
+  main_config_btn["state"] = "normal"
+
+def disable_buttons_on_running():
+  take_screenshot_btn["state"] = "disable"
+  main_home_btn["state"] = "disable"
+  main_config_btn["state"] = "disable"
+
 
 take_screenshot_btn = Button(home_frame, text="Test Screenshot", command=take_screenshot)
 take_screenshot_btn.place(relx=0.07, rely=0.1, width=120, height=40)
