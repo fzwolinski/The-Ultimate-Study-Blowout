@@ -89,7 +89,9 @@ class SmartStudent:
     i = self.start_img_number(self.config["ss_path"])
     print("Starting with {}.jpg\n".format(i))
     while True:
-      self.take_screenshot(self.config["window_id"], self.config["ss_path"], str(i))
+      if self.take_screenshot(self.config["window_id"], self.config["ss_path"], str(i)) == -1:
+        self.stop_program()
+        return
       if i > 0:
         if self.config["ss_path"]:
           img1 = pathlib.Path(self.config["ss_path"]) / (str(i-1) + ".jpg")

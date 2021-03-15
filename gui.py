@@ -29,6 +29,7 @@ def set_home_page():
 def set_config_page():
   if not config_frame.winfo_ismapped():
     home_frame.pack_forget()
+    clear_config_status()
     config_frame.pack()
 
 ################# Menu #################
@@ -150,6 +151,11 @@ def validate_config():
     correct_values = False
 
   return correct_values
+
+def clear_config_status():
+    step_validate.set("")
+    diff_perc_validate.set("")
+    save_file_success.set("")
 
 config_window_id_label = Label(config_frame, text="Window ID").place(relx=0.05, rely=0.08)
 config_window_id_op_menu = OptionMenu(config_frame, clicked_window, *window_names)
