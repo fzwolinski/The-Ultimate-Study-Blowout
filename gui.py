@@ -105,16 +105,20 @@ windows = ss.available_windows()
 window_names = [x for x in windows.values()]
 clicked_window = StringVar()
 if str(ss.config["window_id"]) in windows.keys():
-  print("In")
   clicked_window.set(windows[str(ss.config["window_id"])])
 else:
   clicked_window.set(window_names[0])
 
 path = StringVar()
 path.set(ss.config["ss_path"])
+coords_tl = StringVar()
+coords_br = StringVar()
+coords_tl.set(str(ss.config.get("top_left_coords")))
+coords_br.set(str(ss.config.get("bottom_right_coords")))
 
 step_validate = StringVar()
 diff_perc_validate = StringVar()
+coords_validate = StringVar()
 
 save_file_success = StringVar()
 
@@ -134,7 +138,9 @@ def save_config():
       "window_id": int(list(windows.keys())[list(windows.values()).index(clicked_window.get())]),
       "step": int(config_step_entry.get()),
       "ss_path": path.get(), 
-      "diff_percentage": float(config_diff_perc_entry.get())
+      "diff_percentage": float(config_diff_perc_entry.get()),
+      "top_left_coords": eval(coords_tl.get()),
+      "bottom_right_coords": eval(coords_br.get())
     }
   if ss.write_config_to_file(new_config):
     save_file_success.set("Saved!")
@@ -170,6 +176,17 @@ def clear_config_status():
     step_validate.set("")
     diff_perc_validate.set("")
     save_file_success.set("")
+    coords_validate.set("")
+
+def set_ss_coords():
+  try:
+    coord_top_left, coord_bottom_right = ss.set_ss_coords()
+    coords_validate.set("Good")
+    coords_tl.set(str(coord_top_left))
+    coords_br.set(str(coord_bottom_right))
+  except:
+    coords_validate.set("Not set")
+
 
 config_window_id_label = Label(config_frame, text="Window ID").place(relx=0.05, rely=0.08)
 config_window_id_op_menu = OptionMenu(config_frame, clicked_window, *window_names)
@@ -193,10 +210,16 @@ config_diff_perc_entry.insert(0, ss.config["diff_percentage"])
 config_diff_perc_entry.place(relx=0.28, rely=0.08+0.08+0.08+0.08)
 config_diff_perc_validate_label = Label(config_frame, textvariable=diff_perc_validate).place(relx=0.43, rely=0.08+0.08+0.08+0.08)
 
-config_save = Button(config_frame, text="Save", command=save_config)
-config_save.place(relx=0.28, rely=0.08+0.08+0.08+0.08+0.08+0.08)
+config_ss_coords_label = Label(config_frame, text="Crop Screenshot").place(relx=0.05, rely=0.08+0.08+0.08+0.08+0.08)
+config_ss_coords_button = Button(config_frame, text="Set Crop Coords!", command=set_ss_coords).place(relx=0.28, rely=0.08+0.08+0.08+0.08+0.08)
+config_ss_coords_validate_label = Label(config_frame, textvariable=coords_validate).place(relx=0.43, rely=0.08+0.08+0.08+0.08+0.08)
+config_ss_current_coords_tl_label = Label(config_frame, textvariable=coords_tl).place(relx=0.55, rely=0.08+0.08+0.08+0.08+0.08)
+config_ss_current_coords_br_label = Label(config_frame, textvariable=coords_br).place(relx=0.60, rely=0.08+0.08+0.08+0.08+0.08)
 
-save_file_success_info = Label(config_frame, textvariable=save_file_success).place(relx=0.28, rely=0.08+0.08+0.08+0.08+0.08+0.08+0.08)
+config_save = Button(config_frame, text="Save", command=save_config)
+config_save.place(relx=0.28, rely=0.08+0.08+0.08+0.08+0.08+0.08+0.08+0.08)
+
+save_file_success_info = Label(config_frame, textvariable=save_file_success).place(relx=0.28, rely=0.08+0.08+0.08+0.08+0.08+0.08+0.08+0.08+0.08+0.08)
 
 ###################################
 

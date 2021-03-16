@@ -10,6 +10,8 @@ import time
 import imgcompare
 import os
 import threading
+from pynput import keyboard
+import pyautogui as pg
 
 class SmartStudent:
   def __init__(self):
@@ -43,7 +45,9 @@ class SmartStudent:
       "window_id": 0,
       "step": 10,     # Take screenshot every 15s
       "ss_path": "imgs",
-      "diff_percentage": 0.9
+      "diff_percentage": 0.9,
+      "top_left_coords": {},
+      "bottom_right_coords": {}
     }
 
   def check_window_attribute(self):
@@ -126,7 +130,7 @@ class SmartStudent:
     if hwnd == 0:
       print("Wrong window ID.\n")
       return -1
-
+    
     try:
       left, top, right, bot = win32gui.GetClientRect(hwnd)
     except:
@@ -206,3 +210,40 @@ class SmartStudent:
 
     except:
       return 0
+
+  def set_ss_coords(self):
+    self.top_left_coords = {}
+    self.bottom_right_coords = {}
+    def on_press(key):
+      if key == keyboard.Key.f1:
+        top_left = {
+          "x": pg.position()[0],
+          "y": pg.position()[1]
+        }
+        self.top_left_coords = top_left
+        print(top_left)
+        return False  # stop listener
+      elif key == keyboard.Key.f2:
+        bottom_right = {
+          "x": pg.position()[0],
+          "y": pg.position()[1]
+        }
+        self.bottom_right_coords = bottom_right
+        print(bottom_right)
+        return False  # stop listener
+      if key == keyboard.Key.esc:
+        print("Canceled!")
+        return False
+
+    l1 = keyboard.Listener(on_press=on_press)
+    l1.start()
+    l1.join()
+
+    l2 = keyboard.Listener(on_press=on_press)
+    l2.start()
+    l2.join()
+
+    if self.top_left_coords and self.bottom_right_coords:
+      return self.top_left_coords, self.bottom_right_coords
+    else:
+      return -1
