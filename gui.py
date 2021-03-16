@@ -214,7 +214,7 @@ config_ss_coords_label = Label(config_frame, text="Crop Screenshot").place(relx=
 config_ss_coords_button = Button(config_frame, text="Set Crop Coords!", command=set_ss_coords).place(relx=0.28, rely=0.08+0.08+0.08+0.08+0.08)
 config_ss_coords_validate_label = Label(config_frame, textvariable=coords_validate).place(relx=0.43, rely=0.08+0.08+0.08+0.08+0.08)
 config_ss_current_coords_tl_label = Label(config_frame, textvariable=coords_tl).place(relx=0.55, rely=0.08+0.08+0.08+0.08+0.08)
-config_ss_current_coords_br_label = Label(config_frame, textvariable=coords_br).place(relx=0.60, rely=0.08+0.08+0.08+0.08+0.08)
+config_ss_current_coords_br_label = Label(config_frame, textvariable=coords_br).place(relx=0.68, rely=0.08+0.08+0.08+0.08+0.08)
 
 config_save = Button(config_frame, text="Save", command=save_config)
 config_save.place(relx=0.28, rely=0.08+0.08+0.08+0.08+0.08+0.08+0.08+0.08)
@@ -228,5 +228,4 @@ def on_window_close():
   root.destroy()
 
 root.protocol("WM_DELETE_WINDOW", on_window_close)
-
 root.mainloop()

@@ -104,7 +104,8 @@ class SmartStudent:
           img1 = str(i-1) + ".jpg"
           img2 = str(i) + ".jpg"
 
-        print("Diff between {} and {} = {:.5f}%".format(img1, img2, self.percentage_diff_between_two_imgs(img1, img2)))
+        print("Diff between {} and {} = {:.5f}%"
+              .format(str(i-1) + ".jpg", str(i) + ".jpg", self.percentage_diff_between_two_imgs(img1, img2)))
         
         # If difference between two images is too small, it means slide wasnt changed
         # We want to delete this image in order not to have img duplicates
@@ -244,6 +245,9 @@ class SmartStudent:
     l2.join()
 
     if self.top_left_coords and self.bottom_right_coords:
-      return self.top_left_coords, self.bottom_right_coords
-    else:
-      return -1
+      # Check if TOP_LEFT corner is above BOTTOM_RIGHT corner of rectangle
+      if ((self.top_left_coords["x"] < self.bottom_right_coords["x"]) and 
+         (self.top_left_coords["y"] < self.bottom_right_coords["y"])):
+        return self.top_left_coords, self.bottom_right_coords
+
+    return -1
