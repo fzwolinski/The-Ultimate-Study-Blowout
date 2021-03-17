@@ -144,7 +144,6 @@ def save_config():
     }
   if ss.write_config_to_file(new_config):
     save_file_success.set("Saved!")
-    ss.config = new_config
   else:
     save_file_success.set("Error!")
 

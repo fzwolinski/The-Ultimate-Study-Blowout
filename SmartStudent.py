@@ -35,7 +35,8 @@ class SmartStudent:
   def write_config_to_file(self, c):
     try: 
       with open('config.json', 'w') as f:
-        json.dump(c, f)
+        self.config.update(c)
+        json.dump(self.config, f)
       return 1
     except:
       return 0
@@ -46,6 +47,7 @@ class SmartStudent:
       "step": 10,     # Take screenshot every 15s
       "ss_path": "imgs",
       "diff_percentage": 0.9,
+      "window_pos": {"x": 0, "y": 0},
       "top_left_coords": {},
       "bottom_right_coords": {}
     }
@@ -161,6 +163,12 @@ class SmartStudent:
         (bmpinfo['bmWidth'], bmpinfo['bmHeight']),
         bmpstr, 'raw', 'BGRX', 0, 1)
 
+    # Crop image
+    if self.config.get("top_left_coords") and self.config.get("bottom_right_coords"):
+      top_left_x, top_left_y, _, _ = win32gui.GetWindowRect(hwnd)
+      x1, y1, x2, y2 = self.get_rel_crop_coords(top_left_x, top_left_y)
+      im = im.crop((x1, y1, x2, y2))
+    
     win32gui.DeleteObject(saveBitMap.GetHandle())
     saveDC.DeleteDC()
     mfcDC.DeleteDC()
@@ -244,10 +252,44 @@ class SmartStudent:
     l2.start()
     l2.join()
 
+    x1, y1, x2, y2 = win32gui.GetWindowRect(int(self.config.get("window_id")))
+
     if self.top_left_coords and self.bottom_right_coords:
       # Check if TOP_LEFT corner is above BOTTOM_RIGHT corner of rectangle
-      if ((self.top_left_coords["x"] < self.bottom_right_coords["x"]) and 
-         (self.top_left_coords["y"] < self.bottom_right_coords["y"])):
-        return self.top_left_coords, self.bottom_right_coords
+      if not ((self.top_left_coords["x"] < self.bottom_right_coords["x"]) and 
+              (self.top_left_coords["y"] < self.bottom_right_coords["y"])):
+        return -1
+
+      # Check if selected coords fit the window area
+      if (self.top_left_coords["x"] < x1 or self.bottom_right_coords["x"] > x2 or
+          self.top_left_coords["y"] < y1 or self.bottom_right_coords["y"] > y2):
+        return -1
+
+      # If coords are correct, we want to store window position
+      # in order to shift ss area while moving window
+      self.config["window_pos"]["x"] = x1
+      self.config["window_pos"]["y"] = y1
+
+      return self.top_left_coords, self.bottom_right_coords
 
     return -1
+
+  def get_rel_crop_coords(self, tl_x, tl_y):
+    tl_mouse_x = self.config.get("top_left_coords").get("x")
+    tl_mouse_y = self.config.get("top_left_coords").get("y")
+    br_mouse_x = self.config.get("bottom_right_coords").get("x")
+    br_mouse_y = self.config.get("bottom_right_coords").get("y")
+
+    # Calculate window movement
+    x_shift = tl_x - self.config["window_pos"]["x"]
+    y_shitf = tl_y - self.config["window_pos"]["y"]
+
+    # x1, y2 - top left
+    x1 = tl_mouse_x - tl_x + x_shift
+    y1 = tl_mouse_y - tl_y + y_shitf
+
+    # x2, y2 - bottom right
+    x2 = br_mouse_x - tl_x + x_shift
+    y2 = br_mouse_y - tl_y + y_shitf
+
+    return x1, y1, x2, y2
