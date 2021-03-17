@@ -47,7 +47,7 @@ class SmartStudent:
       "step": 10,     # Take screenshot every 15s
       "ss_path": "imgs",
       "diff_percentage": 0.9,
-      "window_pos": {},
+      "window_pos": {"x": 0, "y": 0},
       "top_left_coords": {},
       "bottom_right_coords": {}
     }
@@ -265,6 +265,11 @@ class SmartStudent:
           self.top_left_coords["y"] < y1 or self.bottom_right_coords["y"] > y2):
         return -1
 
+      # If coords are correct, we want to store window position
+      # in order to shift ss area while moving window
+      self.config["window_pos"]["x"] = x1
+      self.config["window_pos"]["y"] = y1
+
       return self.top_left_coords, self.bottom_right_coords
 
     return -1
@@ -275,15 +280,16 @@ class SmartStudent:
     br_mouse_x = self.config.get("bottom_right_coords").get("x")
     br_mouse_y = self.config.get("bottom_right_coords").get("y")
 
-    print(tl_x, tl_y)
-    print(tl_mouse_x, tl_mouse_y)
+    # Calculate window movement
+    x_shift = tl_x - self.config["window_pos"]["x"]
+    y_shitf = tl_y - self.config["window_pos"]["y"]
 
     # x1, y2 - top left
-    x1 = tl_mouse_x - tl_x
-    y1 = tl_mouse_y - tl_y
+    x1 = tl_mouse_x - tl_x + x_shift
+    y1 = tl_mouse_y - tl_y + y_shitf
 
     # x2, y2 - bottom right
-    x2 = br_mouse_x - tl_x
-    y2 = br_mouse_y - tl_y
+    x2 = br_mouse_x - tl_x + x_shift
+    y2 = br_mouse_y - tl_y + y_shitf
 
     return x1, y1, x2, y2
