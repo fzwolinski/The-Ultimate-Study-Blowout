@@ -35,7 +35,8 @@ class SmartStudent:
   def write_config_to_file(self, c):
     try: 
       with open('config.json', 'w') as f:
-        json.dump(c, f)
+        self.config.update(c)
+        json.dump(self.config, f)
       return 1
     except:
       return 0
@@ -46,6 +47,7 @@ class SmartStudent:
       "step": 10,     # Take screenshot every 15s
       "ss_path": "imgs",
       "diff_percentage": 0.9,
+      "window_pos": {},
       "top_left_coords": {},
       "bottom_right_coords": {}
     }
