@@ -30,7 +30,7 @@ class SmartStudent:
       print("Error opening config file. File may be missing or may be empty.")
       print("Loading default config. You must specify SCREENSHOT WINDOW in Config Tab\n")
       self.config = self.default_config()
-      self.write_config_to_file()
+      self.write_config_to_file(self.config)
 
   def write_config_to_file(self, c):
     try: 
