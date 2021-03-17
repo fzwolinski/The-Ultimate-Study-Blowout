@@ -161,6 +161,12 @@ class SmartStudent:
         (bmpinfo['bmWidth'], bmpinfo['bmHeight']),
         bmpstr, 'raw', 'BGRX', 0, 1)
 
+    # Crop image
+    if self.config.get("top_left_coords") and self.config.get("bottom_right_coords"):
+      top_left_x, top_left_y, _, _ = win32gui.GetWindowRect(hwnd)
+      x1, y1, x2, y2 = self.get_rel_crop_coords(top_left_x, top_left_y)
+      im = im.crop((x1, y1, x2, y2))
+    
     win32gui.DeleteObject(saveBitMap.GetHandle())
     saveDC.DeleteDC()
     mfcDC.DeleteDC()
@@ -244,10 +250,38 @@ class SmartStudent:
     l2.start()
     l2.join()
 
+    x1, y1, x2, y2 = win32gui.GetWindowRect(int(self.config.get("window_id")))
+
     if self.top_left_coords and self.bottom_right_coords:
       # Check if TOP_LEFT corner is above BOTTOM_RIGHT corner of rectangle
-      if ((self.top_left_coords["x"] < self.bottom_right_coords["x"]) and 
-         (self.top_left_coords["y"] < self.bottom_right_coords["y"])):
-        return self.top_left_coords, self.bottom_right_coords
+      if not ((self.top_left_coords["x"] < self.bottom_right_coords["x"]) and 
+              (self.top_left_coords["y"] < self.bottom_right_coords["y"])):
+        return -1
+
+      # Check if selected coords fit the window area
+      if (self.top_left_coords["x"] < x1 or self.bottom_right_coords["x"] > x2 or
+          self.top_left_coords["y"] < y1 or self.bottom_right_coords["y"] > y2):
+        return -1
+
+      return self.top_left_coords, self.bottom_right_coords
 
     return -1
+
+  def get_rel_crop_coords(self, tl_x, tl_y):
+    tl_mouse_x = self.config.get("top_left_coords").get("x")
+    tl_mouse_y = self.config.get("top_left_coords").get("y")
+    br_mouse_x = self.config.get("bottom_right_coords").get("x")
+    br_mouse_y = self.config.get("bottom_right_coords").get("y")
+
+    print(tl_x, tl_y)
+    print(tl_mouse_x, tl_mouse_y)
+
+    # x1, y2 - top left
+    x1 = tl_mouse_x - tl_x
+    y1 = tl_mouse_y - tl_y
+
+    # x2, y2 - bottom right
+    x2 = br_mouse_x - tl_x
+    y2 = br_mouse_y - tl_y
+
+    return x1, y1, x2, y2
