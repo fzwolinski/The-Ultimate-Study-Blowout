@@ -2,6 +2,7 @@ from tkinter import filedialog
 from tkinter import *
 from SmartStudent import *
 import time
+import webbrowser
 
 SCREEN_WIDTH = 900
 SCREEN_HEIGHT = 600 
@@ -22,15 +23,19 @@ ss = SmartStudent()
 
 # Change Main View
 def set_home_page():
-  if not home_frame.winfo_ismapped():
-    config_frame.pack_forget()
-    home_frame.pack()
+  set_main_view(home_frame)
 
 def set_config_page():
-  if not config_frame.winfo_ismapped():
-    home_frame.pack_forget()
-    clear_config_status()
-    config_frame.pack()
+  set_main_view(config_frame)
+
+def set_info_page():
+  set_main_view(info_frame)
+
+def set_main_view(p):
+  for view in main_views:
+    if view != p:
+      view.pack_forget()
+  p.pack()
 
 ################# Menu #################
 menu_btns_frame = Frame(root, width=SCREEN_WIDTH, height=MENU_HEIGHT, bg=MAIN_BG)
@@ -38,16 +43,21 @@ menu_btns_frame.pack(expand=True, fill=BOTH)
 
 main_home_btn = Button(menu_btns_frame, text="Home", command=set_home_page)
 main_config_btn = Button(menu_btns_frame, text="Config", command=set_config_page)
+main_info_btn = Button(menu_btns_frame, text="Info", command=set_info_page)
 
 main_home_btn.pack(side=LEFT)
 main_config_btn.pack(side=LEFT)
+main_info_btn.pack(side=LEFT)
 ########################################  
 
-# Main Views 
+# Main Views
 home_frame = Frame(root, width=SCREEN_WIDTH, height=SCREEN_HEIGHT-MENU_HEIGHT, bg=MAIN_BG)
 home_frame.pack()
 
 config_frame = Frame(root, width=SCREEN_WIDTH, height=SCREEN_HEIGHT-MENU_HEIGHT, bg=MAIN_BG)
+info_frame = Frame(root, width=SCREEN_WIDTH, height=SCREEN_HEIGHT-MENU_HEIGHT, bg=MAIN_BG)
+
+main_views = [home_frame, config_frame, info_frame]
 ############
 
 ############ Home Page ############
@@ -219,6 +229,17 @@ config_save = Button(config_frame, text="Save", command=save_config)
 config_save.place(relx=0.28, rely=0.08+0.08+0.08+0.08+0.08+0.08+0.08+0.08)
 
 save_file_success_info = Label(config_frame, textvariable=save_file_success).place(relx=0.28, rely=0.08+0.08+0.08+0.08+0.08+0.08+0.08+0.08+0.08+0.08)
+
+###################################
+
+############ Info Page ############
+def open_url(url):
+  webbrowser.open_new(url)
+
+info_author_label = Label(info_frame, text="Author", font=("Arial", 35), bg=MAIN_BG).place(relx=0.5, rely=0.2, anchor=CENTER)
+info_author_link_label = Label(info_frame, text="Github", cursor="hand2", font="Arial 20 underline", bg=MAIN_BG, fg="#0645AD")
+info_author_link_label.place(relx=0.5, rely=0.4, anchor=CENTER)
+info_author_link_label.bind("<Button-1>", lambda e: open_url("https://github.com/fzwolinski"))
 
 ###################################
 
