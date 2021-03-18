@@ -189,7 +189,8 @@ def clear_config_status():
 
 def set_ss_coords():
   try:
-    coord_top_left, coord_bottom_right = ss.set_ss_coords()
+    current_window_id = int(list(windows.keys())[list(windows.values()).index(clicked_window.get())])
+    coord_top_left, coord_bottom_right = ss.set_ss_coords(current_window_id)
     coords_validate.set("Good")
     coords_tl.set(str(coord_top_left))
     coords_br.set(str(coord_bottom_right))

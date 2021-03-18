@@ -58,6 +58,13 @@ class SmartStudent:
     elif not self.config["window_id"] or not isinstance(self.config["window_id"], int):
       print("Wrong window attribute. Check Config Tab")
 
+    # If window_id is incorrect, get first correct one and save it
+    available_windows = self.available_windows()
+    window_names = [x for x in available_windows.values()]
+
+    if not str(self.config["window_id"]) in available_windows.keys():
+      self.config["window_id"] = int(list(available_windows.keys())[0])
+      self.write_config_to_file(self.config)
 
   def available_windows(self):
     #print("These are the ID's and names of the windows that are currently active. \n"
@@ -220,7 +227,7 @@ class SmartStudent:
     except:
       return 0
 
-  def set_ss_coords(self):
+  def set_ss_coords(self, curr_win_id):
     self.top_left_coords = {}
     self.bottom_right_coords = {}
 
@@ -244,8 +251,8 @@ class SmartStudent:
     l1.start()
     l1.join()
 
-    x1, y1, x2, y2 = win32gui.GetWindowRect(int(self.config.get("window_id")))
-
+    x1, y1, x2, y2 = win32gui.GetWindowRect(curr_win_id)
+    
     if self.top_left_coords and self.bottom_right_coords:
       # Check if TOP_LEFT corner is above BOTTOM_RIGHT corner of rectangle
       if not ((self.top_left_coords["x"] < self.bottom_right_coords["x"]) and 
