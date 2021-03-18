@@ -223,6 +223,7 @@ class SmartStudent:
   def set_ss_coords(self):
     self.top_left_coords = {}
     self.bottom_right_coords = {}
+
     def on_press(key):
       if key == keyboard.Key.f1:
         top_left = {
@@ -230,27 +231,18 @@ class SmartStudent:
           "y": pg.position()[1]
         }
         self.top_left_coords = top_left
-        print(top_left)
-        return False  # stop listener
       elif key == keyboard.Key.f2:
         bottom_right = {
           "x": pg.position()[0],
           "y": pg.position()[1]
         }
         self.bottom_right_coords = bottom_right
-        print(bottom_right)
-        return False  # stop listener
-      if key == keyboard.Key.esc:
-        print("Canceled!")
-        return False
+      if (self.top_left_coords and self.bottom_right_coords) or key == keyboard.Key.esc:
+        return False # Stop listener
 
     l1 = keyboard.Listener(on_press=on_press)
     l1.start()
     l1.join()
-
-    l2 = keyboard.Listener(on_press=on_press)
-    l2.start()
-    l2.join()
 
     x1, y1, x2, y2 = win32gui.GetWindowRect(int(self.config.get("window_id")))
 
