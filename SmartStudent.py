@@ -49,7 +49,8 @@ class SmartStudent:
       "diff_percentage": 0.9,
       "window_pos": {"x": 0, "y": 0},
       "top_left_coords": {},
-      "bottom_right_coords": {}
+      "bottom_right_coords": {},
+      "crop_img": False
     }
 
   def check_window_attribute(self):
@@ -171,7 +172,7 @@ class SmartStudent:
         bmpstr, 'raw', 'BGRX', 0, 1)
 
     # Crop image
-    if self.config.get("top_left_coords") and self.config.get("bottom_right_coords"):
+    if self.config["crop_img"] and self.config.get("top_left_coords") and self.config.get("bottom_right_coords"):
       top_left_x, top_left_y, _, _ = win32gui.GetWindowRect(hwnd)
       x1, y1, x2, y2 = self.get_rel_crop_coords(top_left_x, top_left_y)
       im = im.crop((x1, y1, x2, y2))

@@ -132,6 +132,9 @@ coords_validate = StringVar()
 
 save_file_success = StringVar()
 
+crop_ss = IntVar()
+crop_ss.set(1 if ss.config["crop_img"] else 0)
+
 def set_path():
   path_dir = filedialog.askdirectory()
   path.set(path_dir)
@@ -150,7 +153,8 @@ def save_config():
       "ss_path": path.get(), 
       "diff_percentage": float(config_diff_perc_entry.get()),
       "top_left_coords": eval(coords_tl.get()),
-      "bottom_right_coords": eval(coords_br.get())
+      "bottom_right_coords": eval(coords_br.get()),
+      "crop_img": True if crop_ss.get() else False
     }
   if ss.write_config_to_file(new_config):
     save_file_success.set("Saved!")
@@ -221,6 +225,7 @@ config_diff_perc_entry.place(relx=0.28, rely=0.08+0.08+0.08+0.08)
 config_diff_perc_validate_label = Label(config_frame, textvariable=diff_perc_validate).place(relx=0.43, rely=0.08+0.08+0.08+0.08)
 
 config_ss_coords_label = Label(config_frame, text="Crop Screenshot").place(relx=0.05, rely=0.08+0.08+0.08+0.08+0.08)
+config_ss_coords_checkbutton = Checkbutton(config_frame, text="Crop", variable=crop_ss).place(relx=0.18, rely=0.08+0.08+0.08+0.08+0.08)
 config_ss_coords_button = Button(config_frame, text="Set Crop Coords!", command=set_ss_coords).place(relx=0.28, rely=0.08+0.08+0.08+0.08+0.08)
 config_ss_coords_validate_label = Label(config_frame, textvariable=coords_validate).place(relx=0.43, rely=0.08+0.08+0.08+0.08+0.08)
 config_ss_current_coords_tl_label = Label(config_frame, textvariable=coords_tl).place(relx=0.55, rely=0.08+0.08+0.08+0.08+0.08)
