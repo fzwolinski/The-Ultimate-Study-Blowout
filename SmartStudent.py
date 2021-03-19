@@ -19,23 +19,34 @@ class SmartStudent:
     self.load_config()
     # Window handle is necessary
     self.check_window_attribute()
-    #self.main_loop()
     self.stop = False
 
   def load_config(self):
     try:
       with open('config.json') as f:
-        self.config = json.load(f)
+        config_file = json.load(f)
+        self.config = config_file
+        self.config_profile = self.config["profile"][self.config["current_profile"]]
     except:
       print("Error opening config file. File may be missing or may be empty.")
       print("Loading default config. You must specify SCREENSHOT WINDOW in Config Tab\n")
       self.config = self.default_config()
+      self.config_profile = self.config["profile"]["default"]
+      
       self.write_config_to_file(self.config)
 
   def write_config_to_file(self, c):
-    try: 
+    try:
       with open('config.json', 'w') as f:
-        self.config.update(c)
+        json.dump(self.config, f)
+      return 1
+    except:
+      return 0
+
+  def update_config_profile(self, p, c):
+    try:
+      with open('config.json', 'w') as f:
+        self.config["profile"][p].update(c)
         json.dump(self.config, f)
       return 1
     except:
@@ -43,29 +54,64 @@ class SmartStudent:
 
   def default_config(self):
     return  {
-      "window_id": 0,
-      "step": 10,     # Take screenshot every 15s
-      "ss_path": "imgs",
-      "diff_percentage": 0.9,
-      "window_pos": {"x": 0, "y": 0},
-      "top_left_coords": {},
-      "bottom_right_coords": {},
-      "crop_img": False
+      "current_profile": "default",
+      "profile": {
+        "default": {
+          "window_id": 0,
+          "step": 10,
+          "ss_path": "imgs",
+          "diff_percentage": 0.9,
+          "window_pos": {},
+          "top_left_coords": {},
+          "bottom_right_coords": {},
+          "crop_img": False
+        }
+      }
     }
 
+  def set_active_profile(self, p):
+    if p in self.get_profiles():
+      self.config["current_profile"] = p
+      self.config_profile = self.config["profile"][p]
+      self.write_config_to_file(self.config["profile"])
+      return True
+    return False
+
+  def create_new_profile(self, name, body):
+    if name not in self.get_profiles():
+      blank_body = self.default_config()["profile"]["default"]
+      blank_body.update(body)
+      self.config["profile"][name] = blank_body
+      self.write_config_to_file(self.config)
+      return True
+    return False
+
+  def get_profiles(self):
+    return list(self.config["profile"].keys())
+
+  def rename_profile(self, old, new):
+    if old in self.get_profiles() and new not in self.get_profiles() and old != "default":
+      # Both rename profile and change current_profile if old one was active
+      if self.config["current_profile"] == old:
+        self.config["current_profile"] = new
+      self.config["profile"][new] = self.config["profile"].pop(old)
+      self.write_config_to_file(self.config)
+      return True
+    return False
+
   def check_window_attribute(self):
-    if "window_id" not in self.config.keys():
+    if "window_id" not in self.config_profile.keys():
       print("Wrong window attribute. Check Config Tab")
-    elif not self.config["window_id"] or not isinstance(self.config["window_id"], int):
+    elif not self.config_profile["window_id"] or not isinstance(self.config_profile["window_id"], int):
       print("Wrong window attribute. Check Config Tab")
 
     # If window_id is incorrect, get first correct one and save it
     available_windows = self.available_windows()
     window_names = [x for x in available_windows.values()]
 
-    if not str(self.config["window_id"]) in available_windows.keys():
-      self.config["window_id"] = int(list(available_windows.keys())[0])
-      self.write_config_to_file(self.config)
+    if not str(self.config_profile["window_id"]) in available_windows.keys():
+      self.config_profile["window_id"] = int(list(available_windows.keys())[0])
+      self.update_config_profile(self.config["current_profile"], self.config_profile)
 
   def available_windows(self):
     #print("These are the ID's and names of the windows that are currently active. \n"
@@ -82,12 +128,12 @@ class SmartStudent:
   def take_test_screenshot(self):
     self.load_config()
     self.check_window_attribute()
-    if self.take_screenshot(self.config["window_id"], self.config["ss_path"], "test") != -1:
+    if self.take_screenshot(self.config_profile["window_id"], self.config_profile["ss_path"], "test") != -1:
       print("Test screenshot:\n"
             "IMG Name: test.jpg\n"
             "Path: {}\n"
             "Window ID: {}\n"
-            .format(self.config["ss_path"], self.config["window_id"])
+            .format(self.config_profile["ss_path"], self.config_profile["window_id"])
       )
 
   def run(self):
@@ -100,16 +146,16 @@ class SmartStudent:
 
   def main_loop(self):
     # TODO: Max images [ITERATIONS]
-    i = self.start_img_number(self.config["ss_path"])
+    i = self.start_img_number(self.config_profile["ss_path"])
     print("Starting with {}.jpg\n".format(i))
     while True:
-      if self.take_screenshot(self.config["window_id"], self.config["ss_path"], str(i)) == -1:
+      if self.take_screenshot(self.config_profile["window_id"], self.config_profile["ss_path"], str(i)) == -1:
         self.stop_program()
         return
       if i > 0:
-        if self.config["ss_path"]:
-          img1 = pathlib.Path(self.config["ss_path"]) / (str(i-1) + ".jpg")
-          img2 = pathlib.Path(self.config["ss_path"]) / (str(i) + ".jpg")
+        if self.config_profile["ss_path"]:
+          img1 = pathlib.Path(self.config_profile["ss_path"]) / (str(i-1) + ".jpg")
+          img2 = pathlib.Path(self.config_profile["ss_path"]) / (str(i) + ".jpg")
         else:
           img1 = str(i-1) + ".jpg"
           img2 = str(i) + ".jpg"
@@ -119,14 +165,14 @@ class SmartStudent:
         
         # If difference between two images is too small, it means slide wasnt changed
         # We want to delete this image in order not to have img duplicates
-        if self.percentage_diff_between_two_imgs(img1, img2) < float(self.config["diff_percentage"]):
+        if self.percentage_diff_between_two_imgs(img1, img2) < float(self.config_profile["diff_percentage"]):
           try:
             pathlib.Path(img2).unlink()
           except:
             pass
           i -= 1
 
-      time.sleep(self.config["step"])
+      time.sleep(self.config_profile["step"])
       i += 1
 
       if self.stop:
@@ -172,7 +218,7 @@ class SmartStudent:
         bmpstr, 'raw', 'BGRX', 0, 1)
 
     # Crop image
-    if self.config["crop_img"] and self.config.get("top_left_coords") and self.config.get("bottom_right_coords"):
+    if self.config_profile["crop_img"] and self.config_profile.get("top_left_coords") and self.config_profile.get("bottom_right_coords"):
       top_left_x, top_left_y, _, _ = win32gui.GetWindowRect(hwnd)
       x1, y1, x2, y2 = self.get_rel_crop_coords(top_left_x, top_left_y)
       im = im.crop((x1, y1, x2, y2))
@@ -267,22 +313,22 @@ class SmartStudent:
 
       # If coords are correct, we want to store window position
       # in order to shift ss area while moving window
-      self.config["window_pos"]["x"] = x1
-      self.config["window_pos"]["y"] = y1
+      self.config_profile["window_pos"]["x"] = x1
+      self.config_profile["window_pos"]["y"] = y1
 
       return self.top_left_coords, self.bottom_right_coords
 
     return -1
 
   def get_rel_crop_coords(self, tl_x, tl_y):
-    tl_mouse_x = self.config.get("top_left_coords").get("x")
-    tl_mouse_y = self.config.get("top_left_coords").get("y")
-    br_mouse_x = self.config.get("bottom_right_coords").get("x")
-    br_mouse_y = self.config.get("bottom_right_coords").get("y")
+    tl_mouse_x = self.config_profile.get("top_left_coords").get("x")
+    tl_mouse_y = self.config_profile.get("top_left_coords").get("y")
+    br_mouse_x = self.config_profile.get("bottom_right_coords").get("x")
+    br_mouse_y = self.config_profile.get("bottom_right_coords").get("y")
 
     # Calculate window movement
-    x_shift = tl_x - self.config["window_pos"]["x"]
-    y_shitf = tl_y - self.config["window_pos"]["y"]
+    x_shift = tl_x - self.config_profile["window_pos"]["x"]
+    y_shitf = tl_y - self.config_profile["window_pos"]["y"]
 
     # x1, y2 - top left
     x1 = tl_mouse_x - tl_x + x_shift

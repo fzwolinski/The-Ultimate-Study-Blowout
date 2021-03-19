@@ -114,17 +114,17 @@ output_label.place(rely=1+0.01 , relx=0.5, height=180, width=SCREEN_WIDTH+8, anc
 windows = ss.available_windows()
 window_names = [x for x in windows.values()]
 clicked_window = StringVar()
-if str(ss.config["window_id"]) in windows.keys():
-  clicked_window.set(windows[str(ss.config["window_id"])])
+if str(ss.config_profile["window_id"]) in windows.keys():
+  clicked_window.set(windows[str(ss.config_profile["window_id"])])
 else:
   clicked_window.set(window_names[0])
 
 path = StringVar()
-path.set(ss.config["ss_path"])
+path.set(ss.config_profile["ss_path"])
 coords_tl = StringVar()
 coords_br = StringVar()
-coords_tl.set(str(ss.config.get("top_left_coords")))
-coords_br.set(str(ss.config.get("bottom_right_coords")))
+coords_tl.set(str(ss.config_profile.get("top_left_coords")))
+coords_br.set(str(ss.config_profile.get("bottom_right_coords")))
 
 step_validate = StringVar()
 diff_perc_validate = StringVar()
@@ -133,7 +133,7 @@ coords_validate = StringVar()
 save_file_success = StringVar()
 
 crop_ss = IntVar()
-crop_ss.set(1 if ss.config["crop_img"] else 0)
+crop_ss.set(1 if ss.config_profile["crop_img"] else 0)
 
 def set_path():
   path_dir = filedialog.askdirectory()
@@ -156,7 +156,8 @@ def save_config():
       "bottom_right_coords": eval(coords_br.get()),
       "crop_img": True if crop_ss.get() else False
     }
-  if ss.write_config_to_file(new_config):
+  # TODO current_profile make flexible
+  if ss.update_config_profile(ss.config["current_profile"], new_config):
     save_file_success.set("Saved!")
   else:
     save_file_success.set("Error!")
@@ -208,7 +209,7 @@ config_window_id_op_menu.place(relx=0.28, rely=0.08)
 
 config_step_label = Label(config_frame, text="Step").place(relx=0.05, rely=0.08+0.08)
 config_step_entry = Entry(config_frame)
-config_step_entry.insert(0, ss.config["step"])
+config_step_entry.insert(0, ss.config_profile["step"])
 config_step_entry.place(relx=0.28, rely=0.08+0.08)
 config_step_validate_label = Label(config_frame, textvariable=step_validate).place(relx=0.43, rely=0.08+0.08)
 
@@ -220,7 +221,7 @@ config_ss_current_path_label = Label(config_frame, textvariable=path).place(relx
 
 config_diff_perc_label = Label(config_frame, text="Percentage difference  [0.0; 100.0]").place(relx=0.05, rely=0.08+0.08+0.08+0.08)
 config_diff_perc_entry = Entry(config_frame)
-config_diff_perc_entry.insert(0, ss.config["diff_percentage"])
+config_diff_perc_entry.insert(0, ss.config_profile["diff_percentage"])
 config_diff_perc_entry.place(relx=0.28, rely=0.08+0.08+0.08+0.08)
 config_diff_perc_validate_label = Label(config_frame, textvariable=diff_perc_validate).place(relx=0.43, rely=0.08+0.08+0.08+0.08)
 
