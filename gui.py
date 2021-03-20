@@ -27,6 +27,8 @@ def set_home_page():
 
 def set_config_page():
   set_main_view(config_frame)
+  clear_config_status()
+  insert_config_values()
 
 def set_info_page():
   set_main_view(info_frame)
@@ -113,27 +115,42 @@ output_label.place(rely=1+0.01 , relx=0.5, height=180, width=SCREEN_WIDTH+8, anc
 ############ Config Page ############
 windows = ss.available_windows()
 window_names = [x for x in windows.values()]
-clicked_window = StringVar()
-if str(ss.config_profile["window_id"]) in windows.keys():
-  clicked_window.set(windows[str(ss.config_profile["window_id"])])
-else:
-  clicked_window.set(window_names[0])
 
+# Inputs
+clicked_window = StringVar()
 path = StringVar()
-path.set(ss.config_profile["ss_path"])
+crop_ss = IntVar()
 coords_tl = StringVar()
 coords_br = StringVar()
-coords_tl.set(str(ss.config_profile.get("top_left_coords")))
-coords_br.set(str(ss.config_profile.get("bottom_right_coords")))
 
+# Validate msg's
 step_validate = StringVar()
 diff_perc_validate = StringVar()
 coords_validate = StringVar()
-
 save_file_success = StringVar()
 
-crop_ss = IntVar()
-crop_ss.set(1 if ss.config_profile["crop_img"] else 0)
+def insert_config_values():
+  # Window ID
+  if str(ss.config_profile["window_id"]) in windows.keys():
+    clicked_window.set(windows[str(ss.config_profile["window_id"])])
+  else:
+    clicked_window.set(window_names[3])
+
+  # Step
+  config_step_entry.delete(0, END)
+  config_step_entry.insert(0, ss.config_profile["step"])
+  
+  # Path
+  path.set(ss.config_profile["ss_path"])
+
+  # Percentage difference
+  config_diff_perc_entry.delete(0, END)
+  config_diff_perc_entry.insert(0, ss.config_profile["diff_percentage"])
+
+  # Crop screenshot
+  crop_ss.set(1 if ss.config_profile["crop_img"] else 0)
+  coords_tl.set(str(ss.config_profile.get("top_left_coords")))
+  coords_br.set(str(ss.config_profile.get("bottom_right_coords")))
 
 def set_path():
   path_dir = filedialog.askdirectory()
@@ -156,7 +173,6 @@ def save_config():
       "bottom_right_coords": eval(coords_br.get()),
       "crop_img": True if crop_ss.get() else False
     }
-  # TODO current_profile make flexible
   if ss.update_config_profile(ss.config["current_profile"], new_config):
     save_file_success.set("Saved!")
   else:
@@ -209,7 +225,6 @@ config_window_id_op_menu.place(relx=0.28, rely=0.08)
 
 config_step_label = Label(config_frame, text="Step").place(relx=0.05, rely=0.08+0.08)
 config_step_entry = Entry(config_frame)
-config_step_entry.insert(0, ss.config_profile["step"])
 config_step_entry.place(relx=0.28, rely=0.08+0.08)
 config_step_validate_label = Label(config_frame, textvariable=step_validate).place(relx=0.43, rely=0.08+0.08)
 
@@ -221,7 +236,6 @@ config_ss_current_path_label = Label(config_frame, textvariable=path).place(relx
 
 config_diff_perc_label = Label(config_frame, text="Percentage difference  [0.0; 100.0]").place(relx=0.05, rely=0.08+0.08+0.08+0.08)
 config_diff_perc_entry = Entry(config_frame)
-config_diff_perc_entry.insert(0, ss.config_profile["diff_percentage"])
 config_diff_perc_entry.place(relx=0.28, rely=0.08+0.08+0.08+0.08)
 config_diff_perc_validate_label = Label(config_frame, textvariable=diff_perc_validate).place(relx=0.43, rely=0.08+0.08+0.08+0.08)
 
@@ -236,6 +250,20 @@ config_save = Button(config_frame, text="Save", command=save_config)
 config_save.place(relx=0.28, rely=0.08+0.08+0.08+0.08+0.08+0.08+0.08+0.08)
 
 save_file_success_info = Label(config_frame, textvariable=save_file_success).place(relx=0.28, rely=0.08+0.08+0.08+0.08+0.08+0.08+0.08+0.08+0.08+0.08)
+
+
+# Show profiles buttons
+config_profiles = list(ss.config["profile"].keys())
+
+def set_profile(profile):
+  ss.set_active_profile(profile)
+  insert_config_values()
+
+i = 0.08
+for profile in config_profiles:
+  Button(config_frame, text=profile, command=lambda p=profile: set_profile(p)).place(rely=i, relx=1, anchor=E)
+  i += 0.045
+
 
 ###################################
 
