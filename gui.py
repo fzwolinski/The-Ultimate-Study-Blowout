@@ -29,6 +29,8 @@ def set_config_page():
   set_main_view(config_frame)
   clear_config_status()
   insert_config_values()
+  display_profiles()
+
 
 def set_info_page():
   set_main_view(info_frame)
@@ -134,7 +136,7 @@ def insert_config_values():
   if str(ss.config_profile["window_id"]) in windows.keys():
     clicked_window.set(windows[str(ss.config_profile["window_id"])])
   else:
-    clicked_window.set(window_names[3])
+    clicked_window.set(window_names[0])
 
   # Step
   config_step_entry.delete(0, END)
@@ -152,31 +154,62 @@ def insert_config_values():
   coords_tl.set(str(ss.config_profile.get("top_left_coords")))
   coords_br.set(str(ss.config_profile.get("bottom_right_coords")))
 
+def clear_config_values():
+  # Window ID
+  clicked_window.set(window_names[0])
+
+  # Step
+  config_step_entry.delete(0, END)
+  
+  # Path
+  path.set("")
+
+  # Percentage difference
+  config_diff_perc_entry.delete(0, END)
+  
+  # Crop screenshot
+  crop_ss.set(0)
+  coords_tl.set("")
+  coords_br.set("")
+
 def set_path():
   path_dir = filedialog.askdirectory()
   path.set(path_dir)
 
-def save_config():
+def save_config(action):
   global save_config_click_time
   if (time.perf_counter() - save_config_click_time) < 2:
     return
   save_config_click_time = time.perf_counter()
-  print("saving")
 
-  if validate_config():
-    new_config = {
-      "window_id": int(list(windows.keys())[list(windows.values()).index(clicked_window.get())]),
-      "step": int(config_step_entry.get()),
-      "ss_path": path.get(), 
-      "diff_percentage": float(config_diff_perc_entry.get()),
-      "top_left_coords": eval(coords_tl.get()),
-      "bottom_right_coords": eval(coords_br.get()),
-      "crop_img": True if crop_ss.get() else False
-    }
-  if ss.update_config_profile(ss.config["current_profile"], new_config):
-    save_file_success.set("Saved!")
-  else:
-    save_file_success.set("Error!")
+  if not validate_config():
+    return False
+  new_config = {
+    "window_id": int(list(windows.keys())[list(windows.values()).index(clicked_window.get())]),
+    "step": int(config_step_entry.get()),
+    "ss_path": path.get(), 
+    "diff_percentage": float(config_diff_perc_entry.get()),
+    "top_left_coords": eval(coords_tl.get()),
+    "bottom_right_coords": eval(coords_br.get()),
+    "crop_img": True if crop_ss.get() else False
+  }
+  # Save config/profile (Update)
+  if action == "save":
+    if ss.update_config_profile(ss.config["current_profile"], new_config):
+      save_file_success.set("Saved!")
+    else:
+      save_file_success.set("Error!")
+  # Create new profile
+  elif action == "add":
+    if ss.create_new_profile(profile_name.get(), new_config):
+      display_profiles()
+  # Rename profile
+  elif action == "rename":
+    if ss.rename_profile(ss.config["current_profile"], profile_name.get()):
+      hide_profile_name_input()
+      display_profiles()
+
+
 
 def validate_config():
   correct_values = True
@@ -199,6 +232,13 @@ def validate_config():
   except:
     diff_perc_validate.set("Wrong Value!")
     correct_values = False
+
+  try:
+    tl_coord = eval(coords_tl.get())
+    br_coord = eval(coords_br.get())
+  except:
+    coords_tl.set("{}")
+    coords_br.set("{}")
 
   return correct_values
 
@@ -246,23 +286,101 @@ config_ss_coords_validate_label = Label(config_frame, textvariable=coords_valida
 config_ss_current_coords_tl_label = Label(config_frame, textvariable=coords_tl).place(relx=0.55, rely=0.08+0.08+0.08+0.08+0.08)
 config_ss_current_coords_br_label = Label(config_frame, textvariable=coords_br).place(relx=0.68, rely=0.08+0.08+0.08+0.08+0.08)
 
-config_save = Button(config_frame, text="Save", command=save_config)
+config_save = Button(config_frame, text="Save", command=lambda action="save": save_config(action))
 config_save.place(relx=0.28, rely=0.08+0.08+0.08+0.08+0.08+0.08+0.08+0.08)
+
+profile_name = Entry(config_frame)
 
 save_file_success_info = Label(config_frame, textvariable=save_file_success).place(relx=0.28, rely=0.08+0.08+0.08+0.08+0.08+0.08+0.08+0.08+0.08+0.08)
 
 
-# Show profiles buttons
-config_profiles = list(ss.config["profile"].keys())
+
+
+def show_profile_name_input(text):
+  profile_name.place(relx=0.35, rely=0.08+0.08+0.08+0.08+0.08+0.08+0.08+0.08)
+  profile_name.delete(0, END)
+  profile_name.insert(0, text)
+
+def hide_profile_name_input():
+  profile_name.place_forget()
 
 def set_profile(profile):
   ss.set_active_profile(profile)
+  hide_profile_name_input()
   insert_config_values()
+  config_save.configure(command=lambda action="save": save_config(action))
+
+def new_profile_form():
+  clear_config_values()
+  show_profile_name_input("Profile name")
+  config_save.configure(command=lambda action="add": save_config(action))
+"""
+config_profiles = list(ss.config["profile"].keys())
+profile_button = [None] * (len(config_profiles) + 1)
 
 i = 0.08
-for profile in config_profiles:
-  Button(config_frame, text=profile, command=lambda p=profile: set_profile(p)).place(rely=i, relx=1, anchor=E)
-  i += 0.045
+for j in range(len(config_profiles)):
+  profile_button[j] = Button(config_frame, text=config_profiles[j], command=lambda p=config_profiles[j]: set_profile(p))
+  profile_button[j].place(rely=i, relx=1, anchor=E)
+  i += 0.046
+
+profile_button[j+1] = Button(config_frame, text="+", command=new_profile_form)
+profile_button[j+1].place(rely=i+0.05, relx=1, anchor=E)
+
+def display_profiles():
+  global profile_button
+  #print(profile_button[0])
+  for j in range(len(profile_button)):
+    profile_button[j].place_forget()
+    print(j)
+  
+  config_profiles = list(ss.config["profile"].keys())
+  profile_button = [None] * (len(config_profiles) + 1)
+
+  i = 0.08
+  for j in range(len(config_profiles)):
+    profile_button[j] = Button(config_frame, text=config_profiles[j], command=lambda p=config_profiles[j]: set_profile(p))
+    profile_button[j].place(rely=i, relx=1, anchor=E)
+    i += 0.046
+
+  profile_button[j+1] = Button(config_frame, text="+", command=new_profile_form)
+  profile_button[j+1].place(rely=i+0.05, relx=1, anchor=E)
+"""
+
+profile_button = []
+
+def display_profiles():
+  global profile_button
+  
+  if profile_button:
+    for p in profile_button:
+      p.place_forget()
+      
+  profile_button.clear()
+
+  config_profiles = list(ss.config["profile"].keys())
+
+  i = 0.18
+  for j in range(len(config_profiles)):
+    profile_button.append(Button(config_frame, text=config_profiles[j], command=lambda p=config_profiles[j]: set_profile(p)))
+    profile_button[j].place(rely=i, relx=1, anchor=E)
+    i += 0.046
+
+  add_profile_button = Button(config_frame, text="+", command=new_profile_form)
+  add_profile_button.place(rely=0.08, relx=1, anchor=E)
+  
+def rename_profile():
+  show_profile_name_input(ss.config["current_profile"])
+  config_save.configure(command=lambda action="rename": save_config(action))
+
+def delete_profile():
+  if ss.delete_profile(ss.config["current_profile"]):
+    display_profiles()
+    set_profile((ss.get_profiles())[0])
+
+
+rename_profile = Button(config_frame, text="Rename Profile", command=rename_profile).place(relx=1, rely=1, anchor=SE)
+delete_profile = Button(config_frame, text="Delete Profile", command=delete_profile).place(relx=1, rely=0.955, anchor=SE)
 
 
 ###################################

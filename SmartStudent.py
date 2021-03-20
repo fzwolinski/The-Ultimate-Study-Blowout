@@ -26,7 +26,10 @@ class SmartStudent:
       with open('config.json') as f:
         config_file = json.load(f)
         self.config = config_file
-        self.config_profile = self.config["profile"][self.config["current_profile"]]
+        if self.config["current_profile"] in self.get_profiles():
+          self.config_profile = self.config["profile"][self.config["current_profile"]]
+        else:
+          self.set_active_profile("default")
     except:
       print("Error opening config file. File may be missing or may be empty.")
       print("Loading default config. You must specify SCREENSHOT WINDOW in Config Tab\n")
@@ -98,6 +101,13 @@ class SmartStudent:
       self.write_config_to_file(self.config)
       return True
     return False
+
+  def delete_profile(self, name):
+    if name not in self.get_profiles() or name == "default":
+      return False
+    self.config["profile"].pop(name)
+    self.write_config_to_file(self.config)
+    return True
 
   def check_window_attribute(self):
     if "window_id" not in self.config_profile.keys():
