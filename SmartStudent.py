@@ -15,11 +15,11 @@ import pyautogui as pg
 
 class SmartStudent:
   def __init__(self):
-    self.output = ""
+    self.output = []
     self.load_config()
     # Window handle is necessary
     self.check_window_attribute()
-    self.stop = False
+    self.stop = True
 
   def load_config(self):
     try:
@@ -31,6 +31,7 @@ class SmartStudent:
         else:
           self.set_active_profile("default")
     except:
+      self.output.append("Error opening config file. File may be missing or may be empty.\nLoading default config. You must specify SCREENSHOT WINDOW in Config Tab")
       print("Error opening config file. File may be missing or may be empty.")
       print("Loading default config. You must specify SCREENSHOT WINDOW in Config Tab\n")
       self.config = self.default_config()
@@ -109,10 +110,15 @@ class SmartStudent:
     self.write_config_to_file(self.config)
     return True
 
+  def get_output(self):
+    return self.output, len(self.output)
+
   def check_window_attribute(self):
     if "window_id" not in self.config_profile.keys():
+      self.output.append("Wrong window attribute. Check Config Tab")
       print("Wrong window attribute. Check Config Tab")
     elif not self.config_profile["window_id"] or not isinstance(self.config_profile["window_id"], int):
+      self.output.append("Wrong window attribute. Check Config Tab")
       print("Wrong window attribute. Check Config Tab")
 
     # If window_id is incorrect, get first correct one and save it
@@ -124,21 +130,23 @@ class SmartStudent:
       self.update_config_profile(self.config["current_profile"], self.config_profile)
 
   def available_windows(self):
-    #print("These are the ID's and names of the windows that are currently active. \n"
-    #  "Copy ID of window whose screenshots you will be saving and paste it to Your config file.\n"
-    #  "Example (in config file):\n\"window_id\": 328696,")
-    #print("----------------------------------")
     windows = {}
     for title in pygetwindow.getAllTitles():
       if title:
         windows[str(pygetwindow.getWindowsWithTitle(title)[0]._hWnd)] = title 
     return windows
-    #print("----------------------------------")
 
   def take_test_screenshot(self):
     self.load_config()
     self.check_window_attribute()
     if self.take_screenshot(self.config_profile["window_id"], self.config_profile["ss_path"], "test") != -1:
+      self.output.append(
+            "Test screenshot:\n"
+            "IMG Name: test.jpg\n"
+            "Path: {}\n"
+            "Window ID: {}"
+            .format(self.config_profile["ss_path"], self.config_profile["window_id"])
+        )
       print("Test screenshot:\n"
             "IMG Name: test.jpg\n"
             "Path: {}\n"
@@ -150,14 +158,15 @@ class SmartStudent:
     self.stop = False
     run_thread = threading.Thread(target=self.main_loop)
     run_thread.start()
-
+    
   def stop_program(self):
     self.stop = True
 
   def main_loop(self):
     # TODO: Max images [ITERATIONS]
     i = self.start_img_number(self.config_profile["ss_path"])
-    print("Starting with {}.jpg\n".format(i))
+    self.output.append("Starting with {}.jpg".format(i))
+    print("\nStarting with {}.jpg".format(i))
     while True:
       if self.take_screenshot(self.config_profile["window_id"], self.config_profile["ss_path"], str(i)) == -1:
         self.stop_program()
@@ -170,6 +179,8 @@ class SmartStudent:
           img1 = str(i-1) + ".jpg"
           img2 = str(i) + ".jpg"
 
+        self.output.append("Diff between {} and {} = {:.5f}%"
+              .format(str(i-1) + ".jpg", str(i) + ".jpg", self.percentage_diff_between_two_imgs(img1, img2)))
         print("Diff between {} and {} = {:.5f}%"
               .format(str(i-1) + ".jpg", str(i) + ".jpg", self.percentage_diff_between_two_imgs(img1, img2)))
         
@@ -195,12 +206,14 @@ class SmartStudent:
     #hwnd = win32gui.FindWindow(None, "window")
     hwnd = window
     if hwnd == 0:
+      self.output.append("Wrong window ID")
       print("Wrong window ID.\n")
       return -1
     
     try:
       left, top, right, bot = win32gui.GetClientRect(hwnd)
     except:
+      self.output.append("Wrong window ID")
       print("Wrong window ID.\n")
       return -1
   

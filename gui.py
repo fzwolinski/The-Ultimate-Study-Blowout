@@ -3,6 +3,7 @@ from tkinter import *
 from SmartStudent import *
 import time
 import webbrowser
+import threading
 
 SCREEN_WIDTH = 900
 SCREEN_HEIGHT = 600 
@@ -10,6 +11,8 @@ SCREEN_HEIGHT = 600
 MENU_HEIGHT = 26
 
 MAIN_BG = "#fff1e5"
+
+exit_program = False
 
 root = Tk()
 root.title("SmartStudent")
@@ -82,11 +85,13 @@ def run_program():
     disable_buttons_on_running()
     run_stop.set("Stop!")
     ss.run()
+    output_text.place(rely=1+0.01 , relx=0.5, height=400, width=SCREEN_WIDTH-0.5, anchor=S)
     print("Running program")
   else:
     enable_buttons_on_stop()
     run_stop.set("Run!")
     ss.stop_program()
+    output_text.place(rely=1+0.01 , relx=0.5, height=180, width=SCREEN_WIDTH-0.5, anchor=S)
     print("Stopped")
   running = not running
 
@@ -107,10 +112,30 @@ take_screenshot_btn.place(relx=0.07, rely=0.1, width=120, height=40)
 run_program_btn = Button(home_frame, textvariable=run_stop, command=run_program)
 run_program_btn.place(relx=0.5, rely=0.2, anchor=CENTER, width=230, height=70)
 
-output_text = StringVar()
+output_text = Text(root, padx=10, pady=10)
+output_text.place(rely=1+0.01 , relx=0.5, height=180, width=SCREEN_WIDTH-0.5, anchor=S)
 
-output_label = Label(home_frame, textvariable=output_text, borderwidth=4, relief="ridge", bg="white")
-output_label.place(rely=1+0.01 , relx=0.5, height=180, width=SCREEN_WIDTH+8, anchor=S)
+output_widget_len = 0
+
+def update_output():
+  global output_widget_len
+  
+  while not exit_program:
+    output, out_len = ss.get_output()    
+    output_text.config(state=NORMAL)
+    
+    for o in output[output_widget_len : out_len]:
+      output_text.insert(END, "- " + o + "\n")  
+
+    output_widget_len = out_len
+    output_text.see("end")
+    output_text.config(state=DISABLED)
+    
+    time.sleep(3)
+
+output_update = threading.Thread(target=update_output)
+output_update.setDaemon(True)
+output_update.start()
 
 ###################################
 
@@ -365,6 +390,7 @@ info_author_link_label.bind("<Button-1>", lambda e: open_url("https://github.com
 ###################################
 
 def on_window_close():
+  exit_program = True
   ss.stop_program()
   root.destroy()
 
