@@ -17,25 +17,57 @@ class SmartStudent:
   def __init__(self):
     self.output = []
     self.load_config()
+    self.load_translation()
     # Window handle is necessary
     self.check_window_attribute()
     self.stop = True
+
+  def load_translation(self):
+    try:
+      with open(f"langs/{self.config['lang']}.json") as f:
+        self.outputs = json.load(f)['outputs']
+    except:
+      pass
+
+    self.set_available_translations_config()
+  
+  def set_available_translations_config(self):
+    available_langs = []
+    try:
+      for lang in os.listdir("langs"):
+          if lang.endswith(".json"):
+            available_langs.append(lang.replace(".json", ""))
+    except:
+      pass
+  
+    self.config["available_langs"] = available_langs
+    self.write_config_to_file(self.config)
+  
+  def set_language(self, lang):
+    if lang in self.get_available_translations() and lang != self.config["lang"]:
+      self.config["lang"] = lang
+      self.write_config_to_file(self.config)
+      return True
+    return False
+
+
+  def get_available_translations(self):
+    return self.config["available_langs"]
 
   def load_config(self):
     try:
       with open('config.json') as f:
         config_file = json.load(f)
         self.config = config_file
-        if self.config["current_profile"] in self.get_profiles():
-          self.config_profile = self.config["profile"][self.config["current_profile"]]
+        if self.config['current_profile'] in self.get_profiles():
+          self.config_profile = self.config['profile'][self.config['current_profile']]
         else:
           self.set_active_profile("default")
     except:
-      self.output.append("Error opening config file. File may be missing or may be empty.\nLoading default config. You must specify SCREENSHOT WINDOW in Config Tab")
-      print("Error opening config file. File may be missing or may be empty.")
-      print("Loading default config. You must specify SCREENSHOT WINDOW in Config Tab\n")
+      self.output.append(self.outputs['file_open_err'])
+      print(self.outputs['file_open_err'])
       self.config = self.default_config()
-      self.config_profile = self.config["profile"]["default"]
+      self.config_profile = self.config['profile']['default']
       
       self.write_config_to_file(self.config)
 
@@ -50,7 +82,7 @@ class SmartStudent:
   def update_config_profile(self, p, c):
     try:
       with open('config.json', 'w') as f:
-        self.config["profile"][p].update(c)
+        self.config['profile'][p].update(c)
         json.dump(self.config, f)
       return 1
     except:
@@ -58,6 +90,8 @@ class SmartStudent:
 
   def default_config(self):
     return  {
+      "lang": "en",
+      "available_langs": [],
       "current_profile": "default",
       "profile": {
         "default": {
@@ -75,30 +109,30 @@ class SmartStudent:
 
   def set_active_profile(self, p):
     if p in self.get_profiles():
-      self.config["current_profile"] = p
-      self.config_profile = self.config["profile"][p]
-      self.write_config_to_file(self.config["profile"])
+      self.config['current_profile'] = p
+      self.config_profile = self.config['profile'][p]
+      self.write_config_to_file(self.config['profile'])
       return True
     return False
 
   def create_new_profile(self, name, body):
     if name not in self.get_profiles():
-      blank_body = self.default_config()["profile"]["default"]
+      blank_body = self.default_config()['profile']['default']
       blank_body.update(body)
-      self.config["profile"][name] = blank_body
+      self.config['profile'][name] = blank_body
       self.write_config_to_file(self.config)
       return True
     return False
 
   def get_profiles(self):
-    return list(self.config["profile"].keys())
+    return list(self.config['profile'].keys())
 
   def rename_profile(self, old, new):
     if old in self.get_profiles() and new not in self.get_profiles() and old != "default":
       # Both rename profile and change current_profile if old one was active
-      if self.config["current_profile"] == old:
-        self.config["current_profile"] = new
-      self.config["profile"][new] = self.config["profile"].pop(old)
+      if self.config['current_profile'] == old:
+        self.config['current_profile'] = new
+      self.config['profile'][new] = self.config['profile'].pop(old)
       self.write_config_to_file(self.config)
       return True
     return False
@@ -106,7 +140,7 @@ class SmartStudent:
   def delete_profile(self, name):
     if name not in self.get_profiles() or name == "default":
       return False
-    self.config["profile"].pop(name)
+    self.config['profile'].pop(name)
     self.write_config_to_file(self.config)
     return True
 
@@ -115,19 +149,19 @@ class SmartStudent:
 
   def check_window_attribute(self):
     if "window_id" not in self.config_profile.keys():
-      self.output.append("Wrong window attribute. Check Config Tab")
-      print("Wrong window attribute. Check Config Tab")
-    elif not self.config_profile["window_id"] or not isinstance(self.config_profile["window_id"], int):
-      self.output.append("Wrong window attribute. Check Config Tab")
-      print("Wrong window attribute. Check Config Tab")
+      self.output.append(self.outputs['window_id_err'])
+      print(self.outputs['window_id_err'])
+    elif not self.config_profile['window_id'] or not isinstance(self.config_profile['window_id'], int):
+      self.output.append(self.outputs['window_id_err'])
+      print(self.outputs['window_id_err'])
 
     # If window_id is incorrect, get first correct one and save it
     available_windows = self.available_windows()
     window_names = [x for x in available_windows.values()]
 
-    if not str(self.config_profile["window_id"]) in available_windows.keys():
-      self.config_profile["window_id"] = int(list(available_windows.keys())[0])
-      self.update_config_profile(self.config["current_profile"], self.config_profile)
+    if not str(self.config_profile['window_id']) in available_windows.keys():
+      self.config_profile['window_id'] = int(list(available_windows.keys())[0])
+      self.update_config_profile(self.config['current_profile'], self.config_profile)
 
   def available_windows(self):
     windows = {}
@@ -139,19 +173,32 @@ class SmartStudent:
   def take_test_screenshot(self):
     self.load_config()
     self.check_window_attribute()
-    if self.take_screenshot(self.config_profile["window_id"], self.config_profile["ss_path"], "test") != -1:
+    if self.take_screenshot(self.config_profile['window_id'], self.config_profile['ss_path'], "test") != -1:
       self.output.append(
-            "Test screenshot:\n"
-            "IMG Name: test.jpg\n"
-            "Path: {}\n"
-            "Window ID: {}"
-            .format(self.config_profile["ss_path"], self.config_profile["window_id"])
-        )
-      print("Test screenshot:\n"
-            "IMG Name: test.jpg\n"
-            "Path: {}\n"
-            "Window ID: {}\n"
-            .format(self.config_profile["ss_path"], self.config_profile["window_id"])
+            "{}:\n"
+            "{}: test.jpg\n"
+            "{}: {}\n"
+            "{}: {}"
+            .format(
+              self.outputs['test_screenshot'],
+              self.outputs['img_name'],
+              self.outputs['path'],
+              self.config_profile['ss_path'],
+              self.outputs['window_id'],
+              self.config_profile['window_id'])
+      )
+      print(
+            "{}:\n"
+            "{}: test.jpg\n"
+            "{}: {}\n"
+            "{}: {}"
+            .format(
+              self.outputs['test_screenshot'],
+              self.outputs['img_name'],
+              self.outputs['path'],
+              self.config_profile['ss_path'],
+              self.outputs['window_id'],
+              self.config_profile['window_id'])
       )
 
   def run(self):
@@ -164,36 +211,36 @@ class SmartStudent:
 
   def main_loop(self):
     # TODO: Max images [ITERATIONS]
-    i = self.start_img_number(self.config_profile["ss_path"])
-    self.output.append("Starting with {}.jpg".format(i))
-    print("\nStarting with {}.jpg".format(i))
+    i = self.start_img_number(self.config_profile['ss_path'])
+    self.output.append(f"{self.outputs['starting_with']} {i}.jpg")
+    print(f"{self.outputs['starting_with']} {i}.jpg")
     while True:
-      if self.take_screenshot(self.config_profile["window_id"], self.config_profile["ss_path"], str(i)) == -1:
+      if self.take_screenshot(self.config_profile['window_id'], self.config_profile['ss_path'], str(i)) == -1:
         self.stop_program()
         return
       if i > 0:
-        if self.config_profile["ss_path"]:
-          img1 = pathlib.Path(self.config_profile["ss_path"]) / (str(i-1) + ".jpg")
-          img2 = pathlib.Path(self.config_profile["ss_path"]) / (str(i) + ".jpg")
+        if self.config_profile['ss_path']:
+          img1 = pathlib.Path(self.config_profile['ss_path']) / (str(i-1) + ".jpg")
+          img2 = pathlib.Path(self.config_profile['ss_path']) / (str(i) + ".jpg")
         else:
           img1 = str(i-1) + ".jpg"
           img2 = str(i) + ".jpg"
 
-        self.output.append("Diff between {} and {} = {:.5f}%"
-              .format(str(i-1) + ".jpg", str(i) + ".jpg", self.percentage_diff_between_two_imgs(img1, img2)))
-        print("Diff between {} and {} = {:.5f}%"
-              .format(str(i-1) + ".jpg", str(i) + ".jpg", self.percentage_diff_between_two_imgs(img1, img2)))
+        self.output.append("{} {} {} {} = {:.5f}%"
+              .format(self.outputs['diff_between'], str(i-1) + ".jpg", self.outputs['and'], str(i) + ".jpg", self.percentage_diff_between_two_imgs(img1, img2)))
+        print("{} {} {} {} = {:.5f}%"
+              .format(self.outputs['diff_between'], str(i-1) + ".jpg", self.outputs['and'], str(i) + ".jpg", self.percentage_diff_between_two_imgs(img1, img2)))
         
         # If difference between two images is too small, it means slide wasnt changed
         # We want to delete this image in order not to have img duplicates
-        if self.percentage_diff_between_two_imgs(img1, img2) < float(self.config_profile["diff_percentage"]):
+        if self.percentage_diff_between_two_imgs(img1, img2) < float(self.config_profile['diff_percentage']):
           try:
             pathlib.Path(img2).unlink()
           except:
             pass
           i -= 1
 
-      time.sleep(self.config_profile["step"])
+      time.sleep(self.config_profile['step'])
       i += 1
 
       if self.stop:
@@ -206,15 +253,15 @@ class SmartStudent:
     #hwnd = win32gui.FindWindow(None, "window")
     hwnd = window
     if hwnd == 0:
-      self.output.append("Wrong window ID")
-      print("Wrong window ID.\n")
+      self.output.append(self.outputs['wrong_window_id'])
+      print(self.outputs['wrong_window_id'])
       return -1
     
     try:
       left, top, right, bot = win32gui.GetClientRect(hwnd)
     except:
-      self.output.append("Wrong window ID")
-      print("Wrong window ID.\n")
+      self.output.append(self.outputs['wrong_window_id'])
+      print(self.outputs['wrong_window_id'], "\n")
       return -1
   
     #left, top, right, bot = win32gui.GetWindowRect(hwnd)
@@ -241,7 +288,7 @@ class SmartStudent:
         bmpstr, 'raw', 'BGRX', 0, 1)
 
     # Crop image
-    if self.config_profile["crop_img"] and self.config_profile.get("top_left_coords") and self.config_profile.get("bottom_right_coords"):
+    if self.config_profile['crop_img'] and self.config_profile.get("top_left_coords") and self.config_profile.get("bottom_right_coords"):
       top_left_x, top_left_y, _, _ = win32gui.GetWindowRect(hwnd)
       x1, y1, x2, y2 = self.get_rel_crop_coords(top_left_x, top_left_y)
       im = im.crop((x1, y1, x2, y2))
@@ -325,19 +372,19 @@ class SmartStudent:
     
     if self.top_left_coords and self.bottom_right_coords:
       # Check if TOP_LEFT corner is above BOTTOM_RIGHT corner of rectangle
-      if not ((self.top_left_coords["x"] < self.bottom_right_coords["x"]) and 
-              (self.top_left_coords["y"] < self.bottom_right_coords["y"])):
+      if not ((self.top_left_coords['x'] < self.bottom_right_coords['x']) and 
+              (self.top_left_coords['y'] < self.bottom_right_coords['y'])):
         return -1
 
       # Check if selected coords fit the window area
-      if (self.top_left_coords["x"] < x1 or self.bottom_right_coords["x"] > x2 or
-          self.top_left_coords["y"] < y1 or self.bottom_right_coords["y"] > y2):
+      if (self.top_left_coords['x'] < x1 or self.bottom_right_coords['x'] > x2 or
+          self.top_left_coords['y'] < y1 or self.bottom_right_coords['y'] > y2):
         return -1
 
       # If coords are correct, we want to store window position
       # in order to shift ss area while moving window
-      self.config_profile["window_pos"]["x"] = x1
-      self.config_profile["window_pos"]["y"] = y1
+      self.config_profile['window_pos']['x'] = x1
+      self.config_profile['window_pos']['y'] = y1
 
       return self.top_left_coords, self.bottom_right_coords
 
@@ -350,8 +397,8 @@ class SmartStudent:
     br_mouse_y = self.config_profile.get("bottom_right_coords").get("y")
 
     # Calculate window movement
-    x_shift = tl_x - self.config_profile["window_pos"]["x"]
-    y_shitf = tl_y - self.config_profile["window_pos"]["y"]
+    x_shift = tl_x - self.config_profile['window_pos']['x']
+    y_shitf = tl_y - self.config_profile['window_pos']['y']
 
     # x1, y2 - top left
     x1 = tl_mouse_x - tl_x + x_shift

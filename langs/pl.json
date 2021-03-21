@@ -1,0 +1,43 @@
+{
+  "outputs": {
+    "file_open_err": "Błąd przy otwieraniu pliku konfiguracyjnego. Plik może nie istnieć lub być pusty.\nWczytywanie domyślnej konfiguracji. Musisz wybrać SCREENSHOT WINDOW w zakładce Config",
+    "window_id_err": "Niewłaściwy atrybut okna. Sprawdź zakładkę Config",
+    "wrong_window_id": "Złe ID okna",
+
+    "test_screenshot": "Screenshot Testowy",
+    "img_name": "Nazwa zdj",
+    "path": "Ścieżka",
+    "window_id": "ID Okna",
+    "starting_with": "Zaczynanie od",
+    "diff_between": "Różnica pomiędzy",
+    "and": "i"
+  },
+  "gui": {
+    "home": "Home",
+    "config": "Config",
+    "info": "Info",
+
+    "window_id": "ID Okna",
+
+    "run_program": "Start",
+    "stop_program": "Stop",
+    "save": "Zapisz",
+    "saved": "Zapisano",
+    "error": "Błąd",
+    "good": "Dobrze",
+    "wrong_value": "Zła wartość",
+    "not_set": "Nie ustawiono",
+    "step": "Krok",
+    "path": "Ścieżka",
+    "select_path": "Ustaw ścieżkę",
+    "percentage_diff": "Różnica procentowa",
+    "crop": "Przytnij",
+    "crop_screenshot": "Przytnij Screenshot",
+    "test_screenshot": "Screenshot Testowy",
+    "set_crop_coords": "Ustaw współrzędne przycinania",
+    "profile_name": "Nazwa profilu",
+    "rename_profile": "Zmień nazwę profilu",
+    "delete_profile": "Usuń profil",
+    "author": "Autor"
+  }
+}

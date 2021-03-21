@@ -1,0 +1,43 @@
+{
+  "outputs": {
+    "file_open_err": "Error opening config file. File may be missing or may be empty.\nLoading default config. You must specify SCREENSHOT WINDOW in Config Tab",
+    "window_id_err": "Wrong window attribute. Check Config Tab",
+    "wrong_window_id": "Wrong window ID",
+
+    "test_screenshot": "Test screenshot",
+    "img_name": "IMG Name",
+    "path": "Path",
+    "window_id": "Window ID",
+    "starting_with": "Starting with",
+    "diff_between": "Diff between",
+    "and": "and"
+  },
+  "gui": {
+    "home": "Home",
+    "config": "Config",
+    "info": "Info",
+
+    "window_id": "Window ID",
+
+    "run_program": "Run",
+    "stop_program": "Stop",
+    "save": "Save",
+    "saved": "Saved",
+    "error": "Error",
+    "good": "Good",
+    "wrong_value": "Wrong Value",
+    "not_set": "Not set",
+    "step": "Step",
+    "path": "Path",
+    "select_path": "Select Path",
+    "percentage_diff": "Percentage difference",
+    "crop": "Crop",
+    "crop_screenshot": "Crop Screenshot",
+    "test_screenshot": "Test screenshot",
+    "set_crop_coords": "Set Crop Coords",
+    "profile_name": "Profile name",
+    "rename_profile": "Rename Profile",
+    "delete_profile": "Detele Profile",
+    "author": "Author"
+  }
+}
