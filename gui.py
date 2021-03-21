@@ -314,38 +314,6 @@ def new_profile_form():
   clear_config_values()
   show_profile_name_input("Profile name")
   config_save.configure(command=lambda action="add": save_config(action))
-"""
-config_profiles = list(ss.config["profile"].keys())
-profile_button = [None] * (len(config_profiles) + 1)
-
-i = 0.08
-for j in range(len(config_profiles)):
-  profile_button[j] = Button(config_frame, text=config_profiles[j], command=lambda p=config_profiles[j]: set_profile(p))
-  profile_button[j].place(rely=i, relx=1, anchor=E)
-  i += 0.046
-
-profile_button[j+1] = Button(config_frame, text="+", command=new_profile_form)
-profile_button[j+1].place(rely=i+0.05, relx=1, anchor=E)
-
-def display_profiles():
-  global profile_button
-  #print(profile_button[0])
-  for j in range(len(profile_button)):
-    profile_button[j].place_forget()
-    print(j)
-  
-  config_profiles = list(ss.config["profile"].keys())
-  profile_button = [None] * (len(config_profiles) + 1)
-
-  i = 0.08
-  for j in range(len(config_profiles)):
-    profile_button[j] = Button(config_frame, text=config_profiles[j], command=lambda p=config_profiles[j]: set_profile(p))
-    profile_button[j].place(rely=i, relx=1, anchor=E)
-    i += 0.046
-
-  profile_button[j+1] = Button(config_frame, text="+", command=new_profile_form)
-  profile_button[j+1].place(rely=i+0.05, relx=1, anchor=E)
-"""
 
 profile_button = []
 
