@@ -13,9 +13,9 @@
     "and": "and"
   },
   "gui": {
-    "home": "Home",
-    "config": "Config",
-    "info": "Info",
+    "home": "\u2302",
+    "config": "\u2699",
+    "info": "\u24d8",
 
     "window_id": "Window ID",
 

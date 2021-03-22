@@ -378,7 +378,7 @@ def display_profiles():
     profile_button[j].place(rely=i, relx=1, anchor=E)
     i += 0.046
 
-  add_profile_button = Button(config_frame, text="+", command=new_profile_form)
+  add_profile_button = Button(config_frame, text=u"\u2795", command=new_profile_form)
   add_profile_button.place(rely=0.08, relx=1, anchor=E)
   
 def rename_profile():
