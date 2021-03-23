@@ -18,6 +18,7 @@ class SmartStudent:
     self.output = []
     self.load_config()
     self.load_translation()
+    self.set_available_themes()
     # Window handle is necessary
     self.check_window_attribute()
     self.stop = True
@@ -50,9 +51,31 @@ class SmartStudent:
       return True
     return False
 
-
   def get_available_translations(self):
     return self.config["available_langs"]
+
+  def set_available_themes(self):
+    available_themes = []
+    try:
+      for theme in os.listdir("themes"):
+        print(theme)
+        if theme.endswith(".json"):
+          available_themes.append(theme.replace(".json", ""))
+    except:
+      pass
+  
+    self.config["available_themes"] = available_themes
+    self.write_config_to_file(self.config)
+
+  def set_theme(self, theme):
+    if theme in self.get_available_themes() and theme != self.config["theme"]:
+      self.config["theme"] = theme
+      self.write_config_to_file(self.config)
+      return True
+    return False
+
+  def get_available_themes(self):
+    return self.config["available_themes"]
 
   def load_config(self):
     try:
@@ -92,13 +115,15 @@ class SmartStudent:
     return  {
       "lang": "en",
       "available_langs": [],
+      "theme": "light",
+      "available_themes": [],
       "current_profile": "default",
       "profile": {
         "default": {
           "window_id": 0,
-          "step": 10,
+          "step": 5,
           "ss_path": "imgs",
-          "diff_percentage": 0.9,
+          "diff_percentage": 2,
           "window_pos": {},
           "top_left_coords": {},
           "bottom_right_coords": {},

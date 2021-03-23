@@ -1,15 +1,15 @@
 {
   "outputs": {
-    "file_open_err": "Błąd przy otwieraniu pliku konfiguracyjnego. Plik może nie istnieć lub być pusty.\nWczytywanie domyślnej konfiguracji. Musisz wybrać SCREENSHOT WINDOW w zakładce Config",
-    "window_id_err": "Niewłaściwy atrybut okna. Sprawdź zakładkę Config",
-    "wrong_window_id": "Złe ID okna",
+    "file_open_err": "B\u0142\u0105d przy otwieraniu pliku konfiguracyjnego. Plik mo\u017ce nie istnie\u0107 lub by\u0107 pusty.\nWczytywanie domy\u015blnej konfiguracji. Musisz wybra\u0107 SCREENSHOT WINDOW w zak\u0142adce Config",
+    "window_id_err": "Niew\u0142a\u015bciwy atrybut okna. Sprawd\u017a zak\u017aadk\u0119 Config",
+    "wrong_window_id": "Z\u0142e ID okna",
 
     "test_screenshot": "Screenshot Testowy",
     "img_name": "Nazwa zdj",
-    "path": "Ścieżka",
+    "path": "\u015acie\u017cka",
     "window_id": "ID Okna",
     "starting_with": "Zaczynanie od",
-    "diff_between": "Różnica pomiędzy",
+    "diff_between": "R\u00f3\u017cnica pomi\u0119dzy",
     "and": "i"
   },
   "gui": {
@@ -23,21 +23,21 @@
     "stop_program": "Stop",
     "save": "Zapisz",
     "saved": "Zapisano",
-    "error": "Błąd",
+    "error": "B\u0142\u0105d",
     "good": "Dobrze",
-    "wrong_value": "Zła wartość",
+    "wrong_value": "Z\u0142a warto\u015b\u0107",
     "not_set": "Nie ustawiono",
     "step": "Krok",
-    "path": "Ścieżka",
-    "select_path": "Ustaw ścieżkę",
-    "percentage_diff": "Różnica procentowa",
+    "path": "\u015acie\u017cka",
+    "select_path": "Ustaw \u015bcie\u017ck\u0119",
+    "percentage_diff": "R\u00f3\u017cnica procentowa",
     "crop": "Przytnij",
     "crop_screenshot": "Przytnij Screenshot",
     "test_screenshot": "Screenshot Testowy",
-    "set_crop_coords": "Ustaw współrzędne przycinania",
-    "profile_name": "Nazwa profilu",
-    "rename_profile": "Zmień nazwę profilu",
-    "delete_profile": "Usuń profil",
+    "set_crop_coords": "Ustaw wsp\u00f3\u0142rz\u0119dne przycinania",
+    "profile_name": "Nazwa profil",
+    "rename_profile": "Zmie\u0144 nazw\u0119 profilu",
+    "delete_profile": "Usu\u0144 profil",
     "author": "Autor"
   }
 }

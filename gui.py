@@ -1,5 +1,4 @@
 from tkinter import filedialog
-
 from tkinter import *
 from tkinter import font as tkFont
 from SmartStudent import *
@@ -8,88 +7,24 @@ import time
 import webbrowser
 import threading
 
-"""
-# Light theme
-MAIN_BG = "#fff1e5"
-RUN_PROGRAM_BTN_FONT = "Roboto 23"
-TEST_SS_BTN_FONT = "Roboto 10"
-
-RUN_PROGRAM_BTN_BG = "#00FF00"
-STOP_PROGRAM_BTN_BG = "#FF0000"
-
-TEST_SS_BTN_BG = "#7dff7d"
-OUTPUT_TEXT_BG = "#97cca4"
-
-CONFIG_LABEL_BG = "#fff1e5"
-CONFIG_ENTRY_BG = "#fce8d7"
-CONFIG_BTN_BG = "#fce8d7"
-CONFIG_SAVE_BTN_BG = "#aeff73"
-CONFIG_DEL_PROFILE_BTN_BG = "#cf0808"
-CONFIG_RENAME_PROGILE_BTN_BG = "#49cef2"
-"""
-
-
-# DARK THEME
-MAIN_BG = "#071626"
-MENU_BTN_BG = "#205b99"
-ACTIVE_MENU_BTN_BG = "#347fcf"
-
-RUN_PROGRAM_BTN_FONT = "Roboto 23"
-TEST_SS_BTN_FONT = "Roboto 10"
-
-RUN_PROGRAM_BTN_BG = "#174f17"
-STOP_PROGRAM_BTN_BG = "#751a1a"
-
-RUN_PROGRAM_BTN_FG = "#badbba"
-STOP_PROGRAM_BTN_FG = "#e09696"
-
-TEST_SS_BTN_BG = "#335c33"
-OUTPUT_TEXT_BG = "#123456"
-
-TEST_SS_BTN_FG = "#afedaf"
-OUTPUT_TEXT_FG = "#8dc4fc"
-
-CONFIG_LABEL_BG = "#144170"
-CONFIG_LABEL_FG = "#85c1ff"
-CONFIG_CURRENT_LBL_BG = MAIN_BG
-
-CONFIG_VALIDATE_LBL_BG = MAIN_BG
-CONFIG_VALIDATE_FG = "#40ad7a"
-
-CONFIG_ENTRY_BG = "#466a91"
-CONFIG_ENTRY_FG = "#FFFFFF"
-CONFIG_BTN_BG = "#5c8bbd"
-CONFIG_ACTIVE_BTN_BG = "#6ea3db"
-CONFIG_SAVE_BTN_BG = "#aeff73"
-CONFIG_ACTIVE_SAVE_BTN_BG = "#c3ff96"
-CONFIG_DEL_PROFILE_BTN_BG = "#cf0808"
-CONFIG_ACTIVE_DEL_PROFILE_BTN_BG = "#de1414"
-CONFIG_RENAME_PROGILE_BTN_BG = "#49cef2"
-CONFIG_ACTIVE_RENAME_PROGILE_BTN_BG = "#78e2ff"
-
-CONFIG_ADD_PROF_BG = "#49ba7f"
-CONFIG_ACTIVE_ADD_PROF_BG = "#4ccf8b"
-CONFIG_PROF_BG = "#5c8bbd"
-CONFIG_ACTIVE_PROF_BG = "#6ea3db"
-
-INFO_AUTHOR_LBL_FG = "#69ffc8"
-INFO_AUTHOR_LINK_LBL_FG = "#5a90e8"
 
 ss = SmartStudent()
 
 gui_texts = {}
-# Load translation
 
+# Load translation
 with open(f"langs/{ss.config['lang']}.json") as f:
   gui_texts = json.load(f)['gui']
+
+# Load theme
+with open(f"themes/{ss.config['theme']}.json") as f:
+  theme = json.load(f)
 
 
 SCREEN_WIDTH = 900
 SCREEN_HEIGHT = 600 
 
 MENU_HEIGHT = 26
-
-
 
 exit_program = False
 
@@ -124,12 +59,12 @@ def set_main_view(p):
   p.pack()
 
 ################# Menu #################
-menu_btns_frame = Frame(root, width=SCREEN_WIDTH, height=MENU_HEIGHT, bg=MAIN_BG)
+menu_btns_frame = Frame(root, width=SCREEN_WIDTH, height=MENU_HEIGHT, bg=theme['MAIN_BG'])
 menu_btns_frame.pack(expand=True, fill=BOTH)
 
-main_home_btn = Button(menu_btns_frame, text=gui_texts['home'], command=set_home_page, bg=MENU_BTN_BG, activebackground=ACTIVE_MENU_BTN_BG)
-main_config_btn = Button(menu_btns_frame, text=gui_texts['config'], command=set_config_page, bg=MENU_BTN_BG, activebackground=ACTIVE_MENU_BTN_BG)
-main_info_btn = Button(menu_btns_frame, text=gui_texts['info'], command=set_info_page, bg=MENU_BTN_BG, activebackground=ACTIVE_MENU_BTN_BG)
+main_home_btn = Button(menu_btns_frame, text=gui_texts['home'], command=set_home_page, bg=theme['MENU_BTN_BG'], activebackground=theme['ACTIVE_MENU_BTN_BG'])
+main_config_btn = Button(menu_btns_frame, text=gui_texts['config'], command=set_config_page, bg=theme['MENU_BTN_BG'], activebackground=theme['ACTIVE_MENU_BTN_BG'])
+main_info_btn = Button(menu_btns_frame, text=gui_texts['info'], command=set_info_page, bg=theme['MENU_BTN_BG'], activebackground=theme['ACTIVE_MENU_BTN_BG'])
 
 main_home_btn.pack(side=LEFT)
 main_config_btn.pack(side=LEFT)
@@ -137,11 +72,11 @@ main_info_btn.pack(side=LEFT)
 ########################################  
 
 # Main Views
-home_frame = Frame(root, width=SCREEN_WIDTH, height=SCREEN_HEIGHT-MENU_HEIGHT, bg=MAIN_BG)
+home_frame = Frame(root, width=SCREEN_WIDTH, height=SCREEN_HEIGHT-MENU_HEIGHT, bg=theme['MAIN_BG'])
 home_frame.pack()
 
-config_frame = Frame(root, width=SCREEN_WIDTH, height=SCREEN_HEIGHT-MENU_HEIGHT, bg=MAIN_BG)
-info_frame = Frame(root, width=SCREEN_WIDTH, height=SCREEN_HEIGHT-MENU_HEIGHT, bg=MAIN_BG)
+config_frame = Frame(root, width=SCREEN_WIDTH, height=SCREEN_HEIGHT-MENU_HEIGHT, bg=theme['MAIN_BG'])
+info_frame = Frame(root, width=SCREEN_WIDTH, height=SCREEN_HEIGHT-MENU_HEIGHT, bg=theme['MAIN_BG'])
 
 main_views = [home_frame, config_frame, info_frame]
 ############
@@ -163,13 +98,13 @@ def run_program():
   if not running:
     disable_buttons_on_running()
     run_stop.set(gui_texts['stop_program'])
-    run_program_btn.configure(bg=STOP_PROGRAM_BTN_BG, activebackground=STOP_PROGRAM_BTN_BG, fg=STOP_PROGRAM_BTN_FG)
+    run_program_btn.configure(bg=theme['STOP_PROGRAM_BTN_BG'], activebackground=theme['STOP_PROGRAM_BTN_BG'], fg=theme['STOP_PROGRAM_BTN_FG'])
     ss.run()
     output_text.place(rely=1+0.01 , relx=0.5, height=400, width=SCREEN_WIDTH+1, anchor=S)
   else:
     enable_buttons_on_stop()
     run_stop.set(f"{gui_texts['run_program']}!")
-    run_program_btn.configure(bg=RUN_PROGRAM_BTN_BG, activebackground=RUN_PROGRAM_BTN_BG, fg=RUN_PROGRAM_BTN_FG)
+    run_program_btn.configure(bg=theme['RUN_PROGRAM_BTN_BG'], activebackground=theme['RUN_PROGRAM_BTN_BG'], fg=theme['RUN_PROGRAM_BTN_FG'])
     ss.stop_program()
     output_text.place(rely=1+0.01 , relx=0.5, height=180, width=SCREEN_WIDTH+1, anchor=S)
   running = not running
@@ -187,13 +122,13 @@ def disable_buttons_on_running():
   main_info_btn['state'] = "disable"
 
 
-take_screenshot_btn = Button(home_frame, text=gui_texts['test_screenshot'], command=take_screenshot, font=TEST_SS_BTN_FONT, bg=TEST_SS_BTN_BG, fg=TEST_SS_BTN_FG)
+take_screenshot_btn = Button(home_frame, text=gui_texts['test_screenshot'], command=take_screenshot, font=theme['TEST_SS_BTN_FONT'], bg=theme['TEST_SS_BTN_BG'], activebackground=theme['ACTIVE_TEST_SS_BTN_BG'], fg=theme['TEST_SS_BTN_FG'])
 take_screenshot_btn.place(relx=0.07, rely=0.1, width=140, height=50)
 
-run_program_btn = Button(home_frame, textvariable=run_stop, command=run_program, font=RUN_PROGRAM_BTN_FONT, bg=RUN_PROGRAM_BTN_BG, activebackground=RUN_PROGRAM_BTN_BG, fg=RUN_PROGRAM_BTN_FG)
+run_program_btn = Button(home_frame, textvariable=run_stop, command=run_program, font=theme['RUN_PROGRAM_BTN_FONT'], bg=theme['RUN_PROGRAM_BTN_BG'], activebackground=theme['RUN_PROGRAM_BTN_BG'], fg=theme['RUN_PROGRAM_BTN_FG'])
 run_program_btn.place(relx=0.5, rely=0.2, anchor=CENTER, width=230, height=70)
 
-output_text = Text(home_frame, padx=10, pady=10, bg=OUTPUT_TEXT_BG, fg=OUTPUT_TEXT_FG)
+output_text = Text(home_frame, padx=10, pady=10, bg=theme['OUTPUT_TEXT_BG'], fg=theme['OUTPUT_TEXT_FG'])
 output_text.place(rely=1+0.01 , relx=0.5, height=180, width=SCREEN_WIDTH+1, anchor=S)
 
 output_widget_len = 0
@@ -225,9 +160,11 @@ windows = ss.available_windows()
 window_names = [x for x in windows.values()]
 
 langs = ss.get_available_translations()
+themes = ss.get_available_themes()
 
 # Inputs
 clicked_lang = StringVar()
+clicked_theme = StringVar()
 clicked_window = StringVar()
 path = StringVar()
 crop_ss = IntVar()
@@ -241,9 +178,12 @@ coords_validate = StringVar()
 save_file_success = StringVar()
 
 def insert_config_values():
-  # Language\
+  # Language
   clicked_lang.set(ss.config["lang"])
 
+  # Theme
+  clicked_theme.set(ss.config["theme"])
+  
   # Window ID
   if str(ss.config_profile['window_id']) in windows.keys():
     clicked_window.set(windows[str(ss.config_profile['window_id'])])
@@ -367,7 +307,6 @@ def set_ss_coords():
     current_window_id = int(list(windows.keys())[list(windows.values()).index(clicked_window.get())])
     coord_top_left, coord_bottom_right = ss.set_ss_coords(current_window_id)
     coords_validate.set(gui_texts['good'])
-    config_ss_coords_validate_label.configure(bg=CONFIG_LABEL_BG)
     coords_tl.set(str(coord_top_left))
     coords_br.set(str(coord_bottom_right))
   except:
@@ -376,46 +315,54 @@ def set_ss_coords():
 def change_lang(e):
   ss.set_language(clicked_lang.get())
 
+def change_theme(t):
+  ss.set_theme(clicked_theme.get())
+
 language_op_menu = OptionMenu(config_frame, clicked_lang, *langs, command=change_lang)
 language_op_menu.place(relx=0.75, rely=0.08)
-language_op_menu.config(bg=CONFIG_BTN_BG, activebackground=CONFIG_BTN_BG, highlightthickness=0)
-language_op_menu["menu"].config(bg=CONFIG_BTN_BG)
+language_op_menu.config(bg=theme['CONFIG_BTN_BG'], activebackground=theme['CONFIG_BTN_BG'], highlightthickness=0)
+language_op_menu["menu"].config(bg=theme['CONFIG_BTN_BG'])
 
-config_window_id_label = Label(config_frame, text=gui_texts['window_id'], bg=CONFIG_LABEL_BG, fg=CONFIG_LABEL_FG).place(relx=0.05, rely=0.08)
+theme_op_menu = OptionMenu(config_frame, clicked_theme, *themes, command=change_theme)
+theme_op_menu.place(relx=0.82, rely=0.08)
+theme_op_menu.config(bg=theme['CONFIG_BTN_BG'], activebackground=theme['CONFIG_BTN_BG'], highlightthickness=0)
+theme_op_menu["menu"].config(bg=theme['CONFIG_BTN_BG'])
+
+config_window_id_label = Label(config_frame, text=gui_texts['window_id'], bg=theme['CONFIG_LABEL_BG'], fg=theme['CONFIG_LABEL_FG']).place(relx=0.05, rely=0.08)
 config_window_id_op_menu = OptionMenu(config_frame, clicked_window, *window_names)
-config_window_id_op_menu.config(bg=CONFIG_BTN_BG, activebackground=CONFIG_BTN_BG, highlightthickness=0)
-config_window_id_op_menu["menu"].config(bg=CONFIG_BTN_BG)
+config_window_id_op_menu.config(bg=theme['CONFIG_BTN_BG'], activebackground=theme['CONFIG_BTN_BG'], highlightthickness=0)
+config_window_id_op_menu["menu"].config(bg=theme['CONFIG_BTN_BG'])
 config_window_id_op_menu.place(relx=0.28, rely=0.08)
 
-config_step_label = Label(config_frame, text=gui_texts['step'], bg=CONFIG_LABEL_BG, fg=CONFIG_LABEL_FG).place(relx=0.05, rely=0.08+0.08)
-config_step_entry = Entry(config_frame, bg=CONFIG_ENTRY_BG, fg=CONFIG_ENTRY_FG, borderwidth = 0)
+config_step_label = Label(config_frame, text=gui_texts['step'], bg=theme['CONFIG_LABEL_BG'], fg=theme['CONFIG_LABEL_FG']).place(relx=0.05, rely=0.08+0.08)
+config_step_entry = Entry(config_frame, bg=theme['CONFIG_ENTRY_BG'], fg=theme['CONFIG_ENTRY_FG'], borderwidth = 0)
 config_step_entry.place(relx=0.28, rely=0.08+0.08)
-config_step_validate_label = Label(config_frame, textvariable=step_validate, bg=CONFIG_VALIDATE_LBL_BG, fg=CONFIG_VALIDATE_FG).place(relx=0.43, rely=0.08+0.08)
+config_step_validate_label = Label(config_frame, textvariable=step_validate, bg=theme['CONFIG_VALIDATE_LBL_BG'], fg=theme['CONFIG_VALIDATE_FG']).place(relx=0.43, rely=0.08+0.08)
 
-config_ss_path_label = Label(config_frame, text=gui_texts['path'], bg=CONFIG_LABEL_BG, fg=CONFIG_LABEL_FG).place(relx=0.05, rely=0.08+0.08+0.08)
-config_ss_path_entry = Button(config_frame, text=f"{gui_texts['select_path']}!", command=set_path, bg=CONFIG_BTN_BG, activebackground=CONFIG_ACTIVE_BTN_BG)
+config_ss_path_label = Label(config_frame, text=gui_texts['path'], bg=theme['CONFIG_LABEL_BG'], fg=theme['CONFIG_LABEL_FG']).place(relx=0.05, rely=0.08+0.08+0.08)
+config_ss_path_entry = Button(config_frame, text=f"{gui_texts['select_path']}!", command=set_path, bg=theme['CONFIG_BTN_BG'], activebackground=theme['CONFIG_ACTIVE_BTN_BG'])
 config_ss_path_entry.place(relx=0.28, rely=0.08+0.08+0.08)
 
-config_ss_current_path_label = Label(config_frame, textvariable=path, bg=CONFIG_CURRENT_LBL_BG, fg=CONFIG_LABEL_FG).place(relx=0.43, rely=0.08+0.08+0.08)
+config_ss_current_path_label = Label(config_frame, textvariable=path, bg=theme['CONFIG_CURRENT_LBL_BG'], fg=theme['CONFIG_LABEL_FG']).place(relx=0.43, rely=0.08+0.08+0.08)
 
-config_diff_perc_label = Label(config_frame, text=f"{gui_texts['percentage_diff']}  [0.0; 100.0]", bg=CONFIG_LABEL_BG, fg=CONFIG_LABEL_FG).place(relx=0.05, rely=0.08+0.08+0.08+0.08)
-config_diff_perc_entry = Entry(config_frame, bg=CONFIG_ENTRY_BG, fg=CONFIG_ENTRY_FG, borderwidth = 0)
+config_diff_perc_label = Label(config_frame, text=f"{gui_texts['percentage_diff']}  [0.0; 100.0]", bg=theme['CONFIG_LABEL_BG'], fg=theme['CONFIG_LABEL_FG']).place(relx=0.05, rely=0.08+0.08+0.08+0.08)
+config_diff_perc_entry = Entry(config_frame, bg=theme['CONFIG_ENTRY_BG'], fg=theme['CONFIG_ENTRY_FG'], borderwidth = 0)
 config_diff_perc_entry.place(relx=0.28, rely=0.08+0.08+0.08+0.08)
-config_diff_perc_validate_label = Label(config_frame, textvariable=diff_perc_validate, bg=CONFIG_VALIDATE_LBL_BG, fg=CONFIG_VALIDATE_FG).place(relx=0.43, rely=0.08+0.08+0.08+0.08)
+config_diff_perc_validate_label = Label(config_frame, textvariable=diff_perc_validate, bg=theme['CONFIG_VALIDATE_LBL_BG'], fg=theme['CONFIG_VALIDATE_FG']).place(relx=0.43, rely=0.08+0.08+0.08+0.08)
 
-config_ss_coords_label = Label(config_frame, text=gui_texts['crop_screenshot'], bg=CONFIG_LABEL_BG, fg=CONFIG_LABEL_FG).place(relx=0.05, rely=0.08+0.08+0.08+0.08+0.08)
-config_ss_coords_checkbutton = Checkbutton(config_frame, text=gui_texts['crop'], variable=crop_ss, bg=CONFIG_LABEL_BG, fg=CONFIG_LABEL_FG, activebackground=CONFIG_LABEL_BG).place(relx=0.18, rely=0.08+0.08+0.08+0.08+0.08)
-config_ss_coords_button = Button(config_frame, text=f"{gui_texts['set_crop_coords']}!", command=set_ss_coords, bg=CONFIG_BTN_BG, activebackground=CONFIG_ACTIVE_BTN_BG).place(relx=0.28, rely=0.08+0.08+0.08+0.08+0.08)
-config_ss_coords_validate_label = Label(config_frame, textvariable=coords_validate, bg=CONFIG_VALIDATE_LBL_BG, fg=CONFIG_VALIDATE_FG).place(relx=0.43, rely=0.08+0.08+0.08+0.08+0.08)
-config_ss_current_coords_tl_label = Label(config_frame, textvariable=coords_tl, bg=CONFIG_CURRENT_LBL_BG, fg=CONFIG_LABEL_FG).place(relx=0.55, rely=0.08+0.08+0.08+0.08+0.08)
-config_ss_current_coords_br_label = Label(config_frame, textvariable=coords_br, bg=CONFIG_CURRENT_LBL_BG, fg=CONFIG_LABEL_FG).place(relx=0.68, rely=0.08+0.08+0.08+0.08+0.08)
+config_ss_coords_label = Label(config_frame, text=gui_texts['crop_screenshot'], bg=theme['CONFIG_LABEL_BG'], fg=theme['CONFIG_LABEL_FG']).place(relx=0.05, rely=0.08+0.08+0.08+0.08+0.08)
+config_ss_coords_checkbutton = Checkbutton(config_frame, text=gui_texts['crop'], variable=crop_ss, bg=theme['CONFIG_LABEL_BG'], fg=theme['CONFIG_LABEL_FG'], activebackground=theme['CONFIG_LABEL_BG']).place(relx=0.18, rely=0.08+0.08+0.08+0.08+0.08)
+config_ss_coords_button = Button(config_frame, text=f"{gui_texts['set_crop_coords']}!", command=set_ss_coords, bg=theme['CONFIG_BTN_BG'], activebackground=theme['CONFIG_ACTIVE_BTN_BG']).place(relx=0.28, rely=0.08+0.08+0.08+0.08+0.08)
+config_ss_coords_validate_label = Label(config_frame, textvariable=coords_validate, bg=theme['CONFIG_VALIDATE_LBL_BG'], fg=theme['CONFIG_VALIDATE_FG']).place(relx=0.28, rely=0.08+0.08+0.08+0.08+0.08+0.06)
+config_ss_current_coords_tl_label = Label(config_frame, textvariable=coords_tl, bg=theme['CONFIG_CURRENT_LBL_BG'], fg=theme['CONFIG_LABEL_FG']).place(relx=0.55, rely=0.08+0.08+0.08+0.08+0.08)
+config_ss_current_coords_br_label = Label(config_frame, textvariable=coords_br, bg=theme['CONFIG_CURRENT_LBL_BG'], fg=theme['CONFIG_LABEL_FG']).place(relx=0.68, rely=0.08+0.08+0.08+0.08+0.08)
 
-config_save = Button(config_frame, text=gui_texts['save'], command=lambda action="save": save_config(action), bg=CONFIG_SAVE_BTN_BG, activebackground=CONFIG_ACTIVE_SAVE_BTN_BG)
+config_save = Button(config_frame, text=gui_texts['save'], command=lambda action="save": save_config(action), bg=theme['CONFIG_SAVE_BTN_BG'], activebackground=theme['CONFIG_ACTIVE_SAVE_BTN_BG'])
 config_save.place(relx=0.28, rely=0.08+0.08+0.08+0.08+0.08+0.08+0.08+0.08)
 
-profile_name = Entry(config_frame, bg=CONFIG_ENTRY_BG, fg=CONFIG_ENTRY_FG, borderwidth = 0)
+profile_name = Entry(config_frame, bg=theme['CONFIG_ENTRY_BG'], fg=theme['CONFIG_ENTRY_FG'], borderwidth = 0)
 
-save_file_success_info = Label(config_frame, textvariable=save_file_success, bg=CONFIG_VALIDATE_LBL_BG, fg=CONFIG_LABEL_FG).place(relx=0.28, rely=0.08+0.08+0.08+0.08+0.08+0.08+0.08+0.08+0.08)
+save_file_success_info = Label(config_frame, textvariable=save_file_success, bg=theme['CONFIG_VALIDATE_LBL_BG'], fg=theme['CONFIG_LABEL_FG']).place(relx=0.28, rely=0.08+0.08+0.08+0.08+0.08+0.08+0.08+0.08+0.08)
 
 
 def show_profile_name_input(text):
@@ -452,11 +399,11 @@ def display_profiles():
 
   i = 0.18
   for j in range(len(config_profiles)):
-    profile_button.append(Button(config_frame, text=config_profiles[j], command=lambda p=config_profiles[j]: set_profile(p), bg=CONFIG_PROF_BG, activebackground=CONFIG_ACTIVE_PROF_BG))
+    profile_button.append(Button(config_frame, text=config_profiles[j], command=lambda p=config_profiles[j]: set_profile(p), bg=theme['CONFIG_PROF_BG'], activebackground=theme['CONFIG_ACTIVE_PROF_BG']))
     profile_button[j].place(rely=i, relx=1, anchor=E)
     i += 0.046
 
-  add_profile_button = Button(config_frame, text=u"\u2795", command=new_profile_form, bg=CONFIG_ADD_PROF_BG, activebackground=CONFIG_ACTIVE_ADD_PROF_BG)
+  add_profile_button = Button(config_frame, text=u"\u2795", command=new_profile_form, bg=theme['CONFIG_ADD_PROF_BG'], activebackground=theme['CONFIG_ACTIVE_ADD_PROF_BG'])
   add_profile_button.place(rely=0.08, relx=1, anchor=E)
   
 def rename_profile():
@@ -469,8 +416,8 @@ def delete_profile():
     set_profile((ss.get_profiles())[0])
 
 
-rename_profile = Button(config_frame, text=gui_texts['rename_profile'], command=rename_profile, bg=CONFIG_RENAME_PROGILE_BTN_BG, activebackground=CONFIG_ACTIVE_RENAME_PROGILE_BTN_BG).place(relx=1, rely=1, anchor=SE)
-delete_profile = Button(config_frame, text=gui_texts['delete_profile'], command=delete_profile, bg=CONFIG_DEL_PROFILE_BTN_BG, activebackground=CONFIG_ACTIVE_DEL_PROFILE_BTN_BG).place(relx=1, rely=0.955, anchor=SE)
+rename_profile = Button(config_frame, text=gui_texts['rename_profile'], command=rename_profile, bg=theme['CONFIG_RENAME_PROGILE_BTN_BG'], activebackground=theme['CONFIG_ACTIVE_RENAME_PROGILE_BTN_BG']).place(relx=1, rely=1, anchor=SE)
+delete_profile = Button(config_frame, text=gui_texts['delete_profile'], command=delete_profile, bg=theme['CONFIG_DEL_PROFILE_BTN_BG'], activebackground=theme['CONFIG_ACTIVE_DEL_PROFILE_BTN_BG']).place(relx=1, rely=0.955, anchor=SE)
 
 
 ###################################
@@ -479,8 +426,8 @@ delete_profile = Button(config_frame, text=gui_texts['delete_profile'], command=
 def open_url(url):
   webbrowser.open_new(url)
 
-info_author_label = Label(info_frame, text=gui_texts['author'], font=("Arial", 35), bg=MAIN_BG, fg=INFO_AUTHOR_LBL_FG).place(relx=0.5, rely=0.2, anchor=CENTER)
-info_author_link_label = Label(info_frame, text="Github", cursor="hand2", font="Arial 20 underline", bg=MAIN_BG, fg=INFO_AUTHOR_LINK_LBL_FG)
+info_author_label = Label(info_frame, text=gui_texts['author'], font=("Arial", 35), bg=theme['MAIN_BG'], fg=theme['INFO_AUTHOR_LBL_FG']).place(relx=0.5, rely=0.2, anchor=CENTER)
+info_author_link_label = Label(info_frame, text="Github", cursor="hand2", font="Arial 20 underline", bg=theme['MAIN_BG'], fg=theme['INFO_AUTHOR_LINK_LBL_FG'])
 info_author_link_label.place(relx=0.5, rely=0.4, anchor=CENTER)
 info_author_link_label.bind("<Button-1>", lambda e: open_url("https://github.com/fzwolinski"))
 
