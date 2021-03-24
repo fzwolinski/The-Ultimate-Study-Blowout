@@ -357,15 +357,16 @@ class SmartStudent:
 
     try:
       for file in os.listdir(path):
-          if file.endswith(".jpg"):
+        if file.endswith(".jpg"):
+          if (file.replace(".jpg", "")).isnumeric():
             img_names.append(int(file.replace(".jpg", "")))
-      if img_names:
-        img_names.sort()
-        return img_names[-1] + 1
-      else:
-        return 0
-
     except:
+      return 0
+    
+    if img_names:
+      img_names.sort()
+      return img_names[-1] + 1
+    else:
       return 0
 
   def set_ss_coords(self, curr_win_id):
