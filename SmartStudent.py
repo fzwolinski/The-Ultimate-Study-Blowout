@@ -58,7 +58,6 @@ class SmartStudent:
     available_themes = []
     try:
       for theme in os.listdir("themes"):
-        print(theme)
         if theme.endswith(".json"):
           available_themes.append(theme.replace(".json", ""))
     except:
