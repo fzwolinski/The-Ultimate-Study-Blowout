@@ -35,5 +35,9 @@
   "CONFIG_ACTIVE_PROF_BG": "#fab2a2",
   "INFO_AUTHOR_LBL_FG": "#000000",
   "INFO_AUTHOR_LINK_LBL_FG": "#0645AD",
-  "CURSOR_ON_HOVER": "hand2"
+  "CURSOR_ON_HOVER": "hand2",
+  "DESC_LBL_BG": "#fff1e5",
+  "DESC_LBL_FG": "#000000",
+  "DESC_WHAT_LBL_BG": "#fff1e5",
+  "DESC_WHAT_LBL_FG": "#000000"
 }

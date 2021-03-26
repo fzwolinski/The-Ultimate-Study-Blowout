@@ -48,6 +48,9 @@ def set_config_page():
   insert_config_values()
   display_profiles()
 
+def set_desc_page():
+  set_main_view(desc_frame)
+
 def set_info_page():
   set_main_view(info_frame)
 
@@ -63,10 +66,13 @@ menu_btns_frame.pack(expand=True, fill=BOTH)
 
 main_home_btn = Button(menu_btns_frame, text=gui_texts['home'], command=set_home_page, bg=theme['MENU_BTN_BG'], activebackground=theme['ACTIVE_MENU_BTN_BG'], cursor=theme["CURSOR_ON_HOVER"])
 main_config_btn = Button(menu_btns_frame, text=gui_texts['config'], command=set_config_page, bg=theme['MENU_BTN_BG'], activebackground=theme['ACTIVE_MENU_BTN_BG'], cursor=theme["CURSOR_ON_HOVER"])
+main_description_btn = Button(menu_btns_frame, text=gui_texts['desc'], command=set_desc_page, bg=theme['MENU_BTN_BG'], activebackground=theme['ACTIVE_MENU_BTN_BG'], cursor=theme["CURSOR_ON_HOVER"])
 main_info_btn = Button(menu_btns_frame, text=gui_texts['info'], command=set_info_page, bg=theme['MENU_BTN_BG'], activebackground=theme['ACTIVE_MENU_BTN_BG'], cursor=theme["CURSOR_ON_HOVER"])
+
 
 main_home_btn.pack(side=LEFT)
 main_config_btn.pack(side=LEFT)
+main_description_btn.pack(side=LEFT)
 main_info_btn.pack(side=LEFT)
 ########################################  
 
@@ -75,9 +81,10 @@ home_frame = Frame(root, width=SCREEN_WIDTH, height=SCREEN_HEIGHT-MENU_HEIGHT, b
 home_frame.pack()
 
 config_frame = Frame(root, width=SCREEN_WIDTH, height=SCREEN_HEIGHT-MENU_HEIGHT, bg=theme['MAIN_BG'])
+desc_frame = Frame(root, width=SCREEN_WIDTH, height=SCREEN_HEIGHT-MENU_HEIGHT, bg=theme['MAIN_BG'])
 info_frame = Frame(root, width=SCREEN_WIDTH, height=SCREEN_HEIGHT-MENU_HEIGHT, bg=theme['MAIN_BG'])
 
-main_views = [home_frame, config_frame, info_frame]
+main_views = [home_frame, config_frame, desc_frame, info_frame]
 ############
 
 ############ Home Page ############
@@ -436,6 +443,29 @@ delete_profile = Button(config_frame, text=gui_texts['delete_profile'], command=
 
 
 ###################################
+
+############ Description Page ############
+DESC_LBL_X = 0.25
+DESC_LBL_Y = 0.10
+
+DESC_LBL_FONT = ("Arial", 13)
+
+DESC_WHAT_LBL_X = 0.3
+DESC_WHAT_LBL_FONT = ("Arial", 10)
+
+desc_window_id_lbl = Label(desc_frame, text=gui_texts['window_id'], font=DESC_LBL_FONT, bg=theme['DESC_LBL_BG'], fg=theme['DESC_LBL_FG']).place(relx=DESC_LBL_X, rely=DESC_LBL_Y, anchor=E)
+desc_step_lbl = Label(desc_frame, text=gui_texts['step'], font=DESC_LBL_FONT, bg=theme['DESC_LBL_BG'], fg=theme['DESC_LBL_FG']).place(relx=DESC_LBL_X, rely=DESC_LBL_Y + 1*0.18, anchor=E)
+desc_path_lbl = Label(desc_frame, text=gui_texts['path'], font=DESC_LBL_FONT, bg=theme['DESC_LBL_BG'], fg=theme['DESC_LBL_FG']).place(relx=DESC_LBL_X, rely=DESC_LBL_Y + 2*0.18, anchor=E)
+desc_diff_perc_lbl = Label(desc_frame, text=gui_texts['percentage_diff'], font=DESC_LBL_FONT, bg=theme['DESC_LBL_BG'], fg=theme['DESC_LBL_FG']).place(relx=DESC_LBL_X, rely=DESC_LBL_Y + 3*0.18, anchor=E)
+desc_coords_lbl = Label(desc_frame, text=gui_texts['crop_screenshot'], font=DESC_LBL_FONT, bg=theme['DESC_LBL_BG'], fg=theme['DESC_LBL_FG']).place(relx=DESC_LBL_X, rely=DESC_LBL_Y + 4*0.18, anchor=E)
+
+desc_what_window_id_lbl = Label(desc_frame, text=gui_texts['desc_what_window_id'], font=DESC_WHAT_LBL_FONT, bg=theme['DESC_WHAT_LBL_BG'], fg=theme['DESC_WHAT_LBL_FG']).place(relx=DESC_WHAT_LBL_X, rely=DESC_LBL_Y, anchor=W)
+desc_what_step_lbl = Label(desc_frame, text=gui_texts['desc_what_step'], font=DESC_WHAT_LBL_FONT, bg=theme['DESC_WHAT_LBL_BG'], fg=theme['DESC_WHAT_LBL_FG'], justify=LEFT).place(relx=DESC_WHAT_LBL_X, rely=DESC_LBL_Y + 1*0.18, anchor=W)
+desc_what_path_lbl = Label(desc_frame, text=gui_texts['desc_what_path'], font=DESC_WHAT_LBL_FONT, bg=theme['DESC_WHAT_LBL_BG'], fg=theme['DESC_WHAT_LBL_FG'], justify=LEFT).place(relx=DESC_WHAT_LBL_X, rely=DESC_LBL_Y + 2*0.18, anchor=W)
+desc_what_diff_perc_lbl = Label(desc_frame, text=gui_texts['desc_what_diff_perc'], font=DESC_WHAT_LBL_FONT, bg=theme['DESC_WHAT_LBL_BG'], fg=theme['DESC_WHAT_LBL_FG'], justify=LEFT).place(relx=DESC_WHAT_LBL_X, rely=DESC_LBL_Y + 3*0.18, anchor=W)
+desc_what_coords_lbl = Label(desc_frame, text=gui_texts['desc_what_coords'], font=DESC_WHAT_LBL_FONT, bg=theme['DESC_WHAT_LBL_BG'], fg=theme['DESC_WHAT_LBL_FG'], justify=LEFT).place(relx=DESC_WHAT_LBL_X, rely=DESC_LBL_Y + 4*0.18, anchor=W)
+
+##########################################
 
 ############ Info Page ############
 def open_url(url):

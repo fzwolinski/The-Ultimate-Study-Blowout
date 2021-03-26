@@ -15,6 +15,7 @@
   "gui": {
     "home": "\u2302",
     "config": "\u2699",
+    "desc": "\u003f",
     "info": "\u24d8",
 
     "window_id": "ID Okna",
@@ -38,6 +39,13 @@
     "profile_name": "Nazwa profilu",
     "rename_profile": "Zmie\u0144 nazw\u0119 profilu",
     "delete_profile": "Usu\u0144 profil",
+
+    "desc_what_window_id": "Okno do przechwytywania screenshot\u00f3w",
+    "desc_what_step": "[s - sekunda] Liczba \u2115 > 0 okre\u015blaj\u0105ca co ile sekund program ma sprawdza\u0107 zmian\u0119 slajdu\n\nZalecana warto\u015b\u0107: 5/10 [s]",
+    "desc_what_path": "\u015acie\u017cka do folderu, w kt\u00f3rym zapisywane b\u0119d\u0105 screenshoty",
+    "desc_what_diff_perc": "Liczba \u211d > 0 okre\u015blaj\u0105ca w jakim stopniu maj\u0105 r\u00f3\u017cni\u0107 si\u0119 od siebie slajdy, \naby program zaliczy\u0142 kolejny slajd jako nowy.\nZalecana warto\u015b\u0107: \u2248 2.0 \n[Warto\u015b\u0107 nale\u017cy dobra\u0107 do prezentacji. Im bardziej slajdy si\u0119 od siebie r\u00f3\u017cni\u0105, \ntym wi\u0119ksza warto\u015b\u0107] \nNiezalecane ustawienie > 5.0",
+    "desc_what_coords": "Umo\u017cliwia zapisywanie wycinka obszaru np. obszaru prezentacji, z okna.\nJak ustawi\u0107? Po klikni\u0119ciu przycisku ustawiaj\u0105cego wsp\u00f3\u0142rz\u0119dne nale\u017cy ustawi\u0107\nmyszk\u0119 w lewym g\u00f3rnym rogu wycinka okna i klikn\u0105\u0107 F1, nast\u0119pnie ustawi\u0107 myszk\u0119\nw prawym dolnym rogu obszaru i klikn\u0105\u0107 F2.\nUwaga: Pozycja F1 musi by\u0107 powy\u017cej pozycji F2",
+
     "author": "Autor"
   }
 }

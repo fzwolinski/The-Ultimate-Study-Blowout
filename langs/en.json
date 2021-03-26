@@ -15,6 +15,7 @@
   "gui": {
     "home": "\u2302",
     "config": "\u2699",
+    "desc": "\u003f",
     "info": "\u24d8",
 
     "window_id": "Window ID",
@@ -38,6 +39,13 @@
     "profile_name": "Profile name",
     "rename_profile": "Rename Profile",
     "delete_profile": "Detele Profile",
+
+    "desc_what_window_id": "Window whose screenshots are captured",
+    "desc_what_step": "[s - seconds] Number \u2115 > 0 which specifies every how many seconds the program should check if\nslide changed.\nRecommended value: 5/10 [s]",
+    "desc_what_path": "Path to the folder where screenshots will be saved",
+    "desc_what_diff_perc": "Number \u211d > 0 which specifies how much should the slides differ from each other\nso that the program will count the next slide as a new one.\nRecommended value: \u2248 2.0\n[The value should be chosen according to the presentation.\nThe more the slides differ from each other, the greater the value should be]\nNot recommended setting > 5.0",
+    "desc_what_coords": "Allows You to crop screenshot area of e.g. presentation area only, of the window. \nHow to set it? After clicking the button that sets the coordinates, place the mouse in the upper left corner\nof the window section and click F1, then place the mouse in the lower right corner of the area and click F2.\nInfo: The F1 position must be above the F2 position",
+
     "author": "Author"
   }
 }
