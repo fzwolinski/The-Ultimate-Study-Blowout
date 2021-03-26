@@ -48,7 +48,6 @@ def set_config_page():
   insert_config_values()
   display_profiles()
 
-
 def set_info_page():
   set_main_view(info_frame)
 
@@ -373,8 +372,16 @@ def show_profile_name_input(text):
 def hide_profile_name_input():
   profile_name.place_forget()
 
+def highlight_current_profile():
+  for p in profile_button:
+    if p['text'] == ss.config["current_profile"]:
+      p.configure(bg=theme['CONFIG_CURRENT_PROF_BG'])
+    else:
+      p.configure(bg=theme['CONFIG_PROF_BG'])
+
 def set_profile(profile):
   ss.set_active_profile(profile)
+  highlight_current_profile()
   hide_profile_name_input()
   insert_config_values()
   config_save.configure(command=lambda action="save": save_config(action))
@@ -399,12 +406,20 @@ def display_profiles():
 
   i = 0.18
   for j in range(len(config_profiles)):
-    profile_button.append(Button(config_frame, text=config_profiles[j], command=lambda p=config_profiles[j]: set_profile(p), bg=theme['CONFIG_PROF_BG'], activebackground=theme['CONFIG_ACTIVE_PROF_BG'], cursor=theme["CURSOR_ON_HOVER"]))
+    profile_button.append(Button(
+      config_frame, 
+      text=config_profiles[j], 
+      command=lambda p=config_profiles[j]: set_profile(p), 
+      bg=theme['CONFIG_PROF_BG'], 
+      activebackground=theme['CONFIG_ACTIVE_PROF_BG'], 
+      cursor=theme["CURSOR_ON_HOVER"])
+      )
     profile_button[j].place(rely=i, relx=1, anchor=E)
     i += 0.046
 
   add_profile_button = Button(config_frame, text=u"\u2795", command=new_profile_form, bg=theme['CONFIG_ADD_PROF_BG'], activebackground=theme['CONFIG_ACTIVE_ADD_PROF_BG'], cursor=theme["CURSOR_ON_HOVER"])
   add_profile_button.place(rely=0.08, relx=1, anchor=E)
+  highlight_current_profile()
   
 def rename_profile():
   show_profile_name_input(ss.config['current_profile'])

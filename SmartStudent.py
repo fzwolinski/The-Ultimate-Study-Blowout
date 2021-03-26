@@ -1,4 +1,3 @@
-import sys
 import json
 import pygetwindow
 import win32gui
@@ -144,6 +143,7 @@ class SmartStudent:
       blank_body = self.default_config()['profile']['default']
       blank_body.update(body)
       self.config['profile'][name] = blank_body
+      self.config['current_profile'] = name
       self.write_config_to_file(self.config)
       return True
     return False
