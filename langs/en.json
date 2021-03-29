@@ -31,7 +31,7 @@
     "step": "Step",
     "path": "Path",
     "select_path": "Select Path",
-    "percentage_diff": "Percentage difference",
+    "percentage_diff": "Percentage difference  [0.0; 100.0]",
     "crop": "Crop",
     "crop_screenshot": "Crop Screenshot",
     "test_screenshot": "Test screenshot",

@@ -44,7 +44,8 @@ class SmartStudent:
     self.write_config_to_file(self.config)
   
   def set_language(self, lang):
-    if lang in self.get_available_translations() and lang != self.config["lang"]:
+    if (lang in self.get_available_translations() and 
+        lang != self.config["lang"]):
       self.config["lang"] = lang
       self.write_config_to_file(self.config)
       return True
@@ -66,7 +67,8 @@ class SmartStudent:
     self.write_config_to_file(self.config)
 
   def set_theme(self, theme):
-    if theme in self.get_available_themes() and theme != self.config["theme"]:
+    if (theme in self.get_available_themes() and 
+        theme != self.config["theme"]):
       self.config["theme"] = theme
       self.write_config_to_file(self.config)
       return True
@@ -86,10 +88,8 @@ class SmartStudent:
           self.set_active_profile("default")
     except:
       self.output.append(self.outputs['file_open_err'])
-      print(self.outputs['file_open_err'])
-      self.config = self.default_config()
-      self.config_profile = self.config['profile']['default']
-      
+      self.config = self.get_default_config()
+      self.config_profile = self.config['profile']['default']      
       self.write_config_to_file(self.config)
 
   def write_config_to_file(self, c):
@@ -109,7 +109,7 @@ class SmartStudent:
     except:
       return 0
 
-  def default_config(self):
+  def get_default_config(self):
     return  {
       "lang": "en",
       "available_langs": [],
@@ -140,7 +140,7 @@ class SmartStudent:
 
   def create_new_profile(self, name, body):
     if name not in self.get_profiles():
-      blank_body = self.default_config()['profile']['default']
+      blank_body = self.get_default_config()['profile']['default']
       blank_body.update(body)
       self.config['profile'][name] = blank_body
       self.config['current_profile'] = name
@@ -152,7 +152,9 @@ class SmartStudent:
     return list(self.config['profile'].keys())
 
   def rename_profile(self, old, new):
-    if old in self.get_profiles() and new not in self.get_profiles() and old != "default":
+    if (old in self.get_profiles() and 
+        new not in self.get_profiles() and 
+        old != "default"):
       # Both rename profile and change current_profile if old one was active
       if self.config['current_profile'] == old:
         self.config['current_profile'] = new
@@ -174,44 +176,32 @@ class SmartStudent:
   def check_window_attribute(self):
     if "window_id" not in self.config_profile.keys():
       self.output.append(self.outputs['window_id_err'])
-      print(self.outputs['window_id_err'])
-    elif not self.config_profile['window_id'] or not isinstance(self.config_profile['window_id'], int):
+    elif (not self.config_profile['window_id'] or 
+          not isinstance(self.config_profile['window_id'], int)):
       self.output.append(self.outputs['window_id_err'])
-      print(self.outputs['window_id_err'])
 
     # If window_id is incorrect, get first correct one and save it
-    available_windows = self.available_windows()
+    available_windows = self.get_available_windows()
     window_names = [x for x in available_windows.values()]
 
     if not str(self.config_profile['window_id']) in available_windows.keys():
       self.config_profile['window_id'] = int(list(available_windows.keys())[0])
       self.update_config_profile(self.config['current_profile'], self.config_profile)
 
-  def available_windows(self):
+  def get_available_windows(self):
     windows = {}
     for title in pygetwindow.getAllTitles():
       if title:
-        windows[str(pygetwindow.getWindowsWithTitle(title)[0]._hWnd)] = title 
+        windows[str(pygetwindow.getWindowsWithTitle(title)[0]._hWnd)] = title
     return windows
 
   def take_test_screenshot(self):
     self.load_config()
     self.check_window_attribute()
-    if self.take_screenshot(self.config_profile['window_id'], self.config_profile['ss_path'], "test") != -1:
+    if (self.take_screenshot(
+          self.config_profile['window_id'], 
+          self.config_profile['ss_path'], "test") != -1):
       self.output.append(
-            "{}:\n"
-            "{}: test.jpg\n"
-            "{}: {}\n"
-            "{}: {}"
-            .format(
-              self.outputs['test_screenshot'],
-              self.outputs['img_name'],
-              self.outputs['path'],
-              self.config_profile['ss_path'],
-              self.outputs['window_id'],
-              self.config_profile['window_id'])
-      )
-      print(
             "{}:\n"
             "{}: test.jpg\n"
             "{}: {}\n"
@@ -234,12 +224,13 @@ class SmartStudent:
     self.stop = True
 
   def main_loop(self):
-    # TODO: Max images [ITERATIONS]
     i = self.start_img_number(self.config_profile['ss_path'])
     self.output.append(f"{self.outputs['starting_with']} {i}.jpg")
-    print(f"{self.outputs['starting_with']} {i}.jpg")
-    while True:
-      if self.take_screenshot(self.config_profile['window_id'], self.config_profile['ss_path'], str(i)) == -1:
+
+    while not self.stop:
+      if (self.take_screenshot(
+            self.config_profile['window_id'], 
+            self.config_profile['ss_path'], str(i)) == -1):
         self.stop_program()
         return
       if i > 0:
@@ -251,13 +242,17 @@ class SmartStudent:
           img2 = str(i) + ".jpg"
 
         self.output.append("{} {} {} {} = {:.5f}%"
-              .format(self.outputs['diff_between'], str(i-1) + ".jpg", self.outputs['and'], str(i) + ".jpg", self.percentage_diff_between_two_imgs(img1, img2)))
-        print("{} {} {} {} = {:.5f}%"
-              .format(self.outputs['diff_between'], str(i-1) + ".jpg", self.outputs['and'], str(i) + ".jpg", self.percentage_diff_between_two_imgs(img1, img2)))
+              .format(self.outputs['diff_between'], 
+                      str(i-1) + ".jpg", 
+                      self.outputs['and'], 
+                      str(i) + ".jpg", 
+                      self.percentage_diff_between_two_imgs(img1, img2)
+                      ))
         
         # If difference between two images is too small, it means slide wasnt changed
         # We want to delete this image in order not to have img duplicates
-        if self.percentage_diff_between_two_imgs(img1, img2) < float(self.config_profile['diff_percentage']):
+        if (self.percentage_diff_between_two_imgs(img1, img2) <
+            float(self.config_profile['diff_percentage'])):
           try:
             pathlib.Path(img2).unlink()
           except:
@@ -267,28 +262,20 @@ class SmartStudent:
       time.sleep(self.config_profile['step'])
       i += 1
 
-      if self.stop:
-        return
-
-
   def take_screenshot(self, window, path, img_name):
     # https://stackoverflow.com/a/24352388
 
-    #hwnd = win32gui.FindWindow(None, "window")
     hwnd = window
     if hwnd == 0:
       self.output.append(self.outputs['wrong_window_id'])
-      print(self.outputs['wrong_window_id'])
       return -1
     
     try:
       left, top, right, bot = win32gui.GetClientRect(hwnd)
     except:
       self.output.append(self.outputs['wrong_window_id'])
-      print(self.outputs['wrong_window_id'], "\n")
       return -1
   
-    #left, top, right, bot = win32gui.GetWindowRect(hwnd)
     w = right - left
     h = bot - top
 
@@ -312,7 +299,9 @@ class SmartStudent:
         bmpstr, 'raw', 'BGRX', 0, 1)
 
     # Crop image
-    if self.config_profile['crop_img'] and self.config_profile.get("top_left_coords") and self.config_profile.get("bottom_right_coords"):
+    if (self.config_profile['crop_img'] and 
+        self.config_profile.get("top_left_coords") and 
+        self.config_profile.get("bottom_right_coords")):
       top_left_x, top_left_y, _, _ = win32gui.GetWindowRect(hwnd)
       x1, y1, x2, y2 = self.get_rel_crop_coords(top_left_x, top_left_y)
       im = im.crop((x1, y1, x2, y2))
@@ -325,7 +314,6 @@ class SmartStudent:
     pathlib.Path(path).mkdir(parents=True, exist_ok=True)
 
     if path:
-      #ss_img = path + "/" + (img_name + ".jpg")
       ss_img = pathlib.Path(path) / (img_name + ".jpg")
     else:
       ss_img = img_name + ".jpg"
@@ -339,7 +327,6 @@ class SmartStudent:
     i1, i2 = Image.open(img1), Image.open(img2)
     if not (i1.size == i2.size):
       return 100
-
     return imgcompare.image_diff_percent(i1, i2)
 
   def start_img_number(self, path):
@@ -352,7 +339,6 @@ class SmartStudent:
 
     0 <- start with 0.jpg
     """
-
     img_names = []
 
     try:
@@ -386,7 +372,8 @@ class SmartStudent:
           "y": pg.position()[1]
         }
         self.bottom_right_coords = bottom_right
-      if (self.top_left_coords and self.bottom_right_coords) or key == keyboard.Key.esc:
+      if ((self.top_left_coords and self.bottom_right_coords) or 
+           key == keyboard.Key.esc):
         return False # Stop listener
 
     l1 = keyboard.Listener(on_press=on_press)
@@ -412,7 +399,6 @@ class SmartStudent:
       self.config_profile['window_pos']['y'] = y1
 
       return self.top_left_coords, self.bottom_right_coords
-
     return -1
 
   def get_rel_crop_coords(self, tl_x, tl_y):

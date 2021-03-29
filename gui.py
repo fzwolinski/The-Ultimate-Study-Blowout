@@ -7,7 +7,6 @@ import time
 import webbrowser
 import threading
 
-
 ss = SmartStudent()
 
 gui_texts = {}
@@ -23,10 +22,7 @@ with open(f"themes/{ss.config['theme']}.json") as f:
 
 SCREEN_WIDTH = 900
 SCREEN_HEIGHT = 600 
-
 MENU_HEIGHT = 26
-
-exit_program = False
 
 root = Tk()
 root.title("SmartStudent")
@@ -36,7 +32,7 @@ root.resizable(False,False)
 ss_click_time = -2
 save_config_click_time = -2
 
-
+exit_program = False
 
 # Change Main View
 def set_home_page():
@@ -61,14 +57,46 @@ def set_main_view(p):
   p.pack()
 
 ################# Menu #################
-menu_btns_frame = Frame(root, width=SCREEN_WIDTH, height=MENU_HEIGHT, bg=theme['MAIN_BG'])
+menu_btns_frame = Frame(
+  root, 
+  width=SCREEN_WIDTH, 
+  height=MENU_HEIGHT, 
+  bg=theme['MAIN_BG']
+)
 menu_btns_frame.pack(expand=True, fill=BOTH)
 
-main_home_btn = Button(menu_btns_frame, text=gui_texts['home'], command=set_home_page, bg=theme['MENU_BTN_BG'], activebackground=theme['ACTIVE_MENU_BTN_BG'], cursor=theme["CURSOR_ON_HOVER"])
-main_config_btn = Button(menu_btns_frame, text=gui_texts['config'], command=set_config_page, bg=theme['MENU_BTN_BG'], activebackground=theme['ACTIVE_MENU_BTN_BG'], cursor=theme["CURSOR_ON_HOVER"])
-main_description_btn = Button(menu_btns_frame, text=gui_texts['desc'], command=set_desc_page, bg=theme['MENU_BTN_BG'], activebackground=theme['ACTIVE_MENU_BTN_BG'], cursor=theme["CURSOR_ON_HOVER"])
-main_info_btn = Button(menu_btns_frame, text=gui_texts['info'], command=set_info_page, bg=theme['MENU_BTN_BG'], activebackground=theme['ACTIVE_MENU_BTN_BG'], cursor=theme["CURSOR_ON_HOVER"])
-
+main_home_btn = Button(
+  menu_btns_frame, 
+  text=gui_texts['home'], 
+  command=set_home_page, 
+  bg=theme['MENU_BTN_BG'], 
+  activebackground=theme['ACTIVE_MENU_BTN_BG'], 
+  cursor=theme["CURSOR_ON_HOVER"]
+)
+main_config_btn = Button(
+  menu_btns_frame, 
+  text=gui_texts['config'],
+  command=set_config_page, 
+  bg=theme['MENU_BTN_BG'], 
+  activebackground=theme['ACTIVE_MENU_BTN_BG'], 
+  cursor=theme["CURSOR_ON_HOVER"]
+)
+main_description_btn = Button(
+  menu_btns_frame, 
+  text=gui_texts['desc'], 
+  command=set_desc_page, 
+  bg=theme['MENU_BTN_BG'], 
+  activebackground=theme['ACTIVE_MENU_BTN_BG'], 
+  cursor=theme["CURSOR_ON_HOVER"]
+)
+main_info_btn = Button(
+  menu_btns_frame, 
+  text=gui_texts['info'], 
+  command=set_info_page, 
+  bg=theme['MENU_BTN_BG'], 
+  activebackground=theme['ACTIVE_MENU_BTN_BG'], 
+  cursor=theme["CURSOR_ON_HOVER"]
+)
 
 main_home_btn.pack(side=LEFT)
 main_config_btn.pack(side=LEFT)
@@ -77,12 +105,32 @@ main_info_btn.pack(side=LEFT)
 ########################################  
 
 # Main Views
-home_frame = Frame(root, width=SCREEN_WIDTH, height=SCREEN_HEIGHT-MENU_HEIGHT, bg=theme['MAIN_BG'])
+home_frame = Frame(
+  root, 
+  width=SCREEN_WIDTH, 
+  height=SCREEN_HEIGHT-MENU_HEIGHT, 
+  bg=theme['MAIN_BG']
+)
 home_frame.pack()
 
-config_frame = Frame(root, width=SCREEN_WIDTH, height=SCREEN_HEIGHT-MENU_HEIGHT, bg=theme['MAIN_BG'])
-desc_frame = Frame(root, width=SCREEN_WIDTH, height=SCREEN_HEIGHT-MENU_HEIGHT, bg=theme['MAIN_BG'])
-info_frame = Frame(root, width=SCREEN_WIDTH, height=SCREEN_HEIGHT-MENU_HEIGHT, bg=theme['MAIN_BG'])
+config_frame = Frame(
+  root, 
+  width=SCREEN_WIDTH, 
+  height=SCREEN_HEIGHT-MENU_HEIGHT, 
+  bg=theme['MAIN_BG']
+)
+desc_frame = Frame(
+  root, 
+  width=SCREEN_WIDTH, 
+  height=SCREEN_HEIGHT-MENU_HEIGHT, 
+  bg=theme['MAIN_BG']
+)
+info_frame = Frame(
+  root, 
+  width=SCREEN_WIDTH, 
+  height=SCREEN_HEIGHT-MENU_HEIGHT, 
+  bg=theme['MAIN_BG']
+)
 
 main_views = [home_frame, config_frame, desc_frame, info_frame]
 ############
@@ -104,15 +152,35 @@ def run_program():
   if not running:
     disable_buttons_on_running()
     run_stop.set(gui_texts['stop_program'])
-    run_program_btn.configure(bg=theme['STOP_PROGRAM_BTN_BG'], activebackground=theme['STOP_PROGRAM_BTN_BG'], fg=theme['STOP_PROGRAM_BTN_FG'])
+    run_program_btn.configure(
+      bg=theme['STOP_PROGRAM_BTN_BG'], 
+      activebackground=theme['STOP_PROGRAM_BTN_BG'], 
+      fg=theme['STOP_PROGRAM_BTN_FG']
+    )
     ss.run()
-    output_text.place(rely=1+0.01 , relx=0.5, height=400, width=SCREEN_WIDTH+1, anchor=S)
+    output_text.place(
+      rely=1+0.01, 
+      relx=0.5, 
+      height=400, 
+      width=SCREEN_WIDTH+1, 
+      anchor=S
+    )
   else:
     enable_buttons_on_stop()
     run_stop.set(f"{gui_texts['run_program']}!")
-    run_program_btn.configure(bg=theme['RUN_PROGRAM_BTN_BG'], activebackground=theme['RUN_PROGRAM_BTN_BG'], fg=theme['RUN_PROGRAM_BTN_FG'])
+    run_program_btn.configure(
+      bg=theme['RUN_PROGRAM_BTN_BG'], 
+      activebackground=theme['RUN_PROGRAM_BTN_BG'], 
+      fg=theme['RUN_PROGRAM_BTN_FG']
+    )
     ss.stop_program()
-    output_text.place(rely=1+0.01 , relx=0.5, height=180, width=SCREEN_WIDTH+1, anchor=S)
+    output_text.place(
+      rely=1+0.01, 
+      relx=0.5, 
+      height=180, 
+      width=SCREEN_WIDTH+1, 
+      anchor=S
+    )
   running = not running
 
 def enable_buttons_on_stop():
@@ -127,14 +195,37 @@ def disable_buttons_on_running():
   main_config_btn['state'] = "disable"
   main_info_btn['state'] = "disable"
 
-
-take_screenshot_btn = Button(home_frame, text=gui_texts['test_screenshot'], command=take_screenshot, font=theme['TEST_SS_BTN_FONT'], bg=theme['TEST_SS_BTN_BG'], activebackground=theme['ACTIVE_TEST_SS_BTN_BG'], fg=theme['TEST_SS_BTN_FG'], cursor=theme["CURSOR_ON_HOVER"])
+take_screenshot_btn = Button(
+  home_frame, 
+  text=gui_texts['test_screenshot'], 
+  command=take_screenshot, 
+  font=theme['TEST_SS_BTN_FONT'], 
+  bg=theme['TEST_SS_BTN_BG'], 
+  activebackground=theme['ACTIVE_TEST_SS_BTN_BG'], 
+  fg=theme['TEST_SS_BTN_FG'], 
+  cursor=theme["CURSOR_ON_HOVER"]
+)
 take_screenshot_btn.place(relx=0.07, rely=0.1, width=140, height=50)
 
-run_program_btn = Button(home_frame, textvariable=run_stop, command=run_program, font=theme['RUN_PROGRAM_BTN_FONT'], bg=theme['RUN_PROGRAM_BTN_BG'], activebackground=theme['RUN_PROGRAM_BTN_BG'], fg=theme['RUN_PROGRAM_BTN_FG'], cursor=theme["CURSOR_ON_HOVER"])
+run_program_btn = Button(
+  home_frame, 
+  textvariable=run_stop, 
+  command=run_program, 
+  font=theme['RUN_PROGRAM_BTN_FONT'], 
+  bg=theme['RUN_PROGRAM_BTN_BG'], 
+  activebackground=theme['RUN_PROGRAM_BTN_BG'], 
+  fg=theme['RUN_PROGRAM_BTN_FG'], 
+  cursor=theme["CURSOR_ON_HOVER"]
+)
 run_program_btn.place(relx=0.5, rely=0.2, anchor=CENTER, width=230, height=70)
 
-output_text = Text(home_frame, padx=10, pady=10, bg=theme['OUTPUT_TEXT_BG'], fg=theme['OUTPUT_TEXT_FG'])
+output_text = Text(
+  home_frame, 
+  padx=10, 
+  pady=10, 
+  bg=theme['OUTPUT_TEXT_BG'], 
+  fg=theme['OUTPUT_TEXT_FG']
+)
 output_text.place(rely=1+0.01 , relx=0.5, height=180, width=SCREEN_WIDTH+1, anchor=S)
 
 output_widget_len = 0
@@ -143,11 +234,11 @@ def update_output():
   global output_widget_len
   
   while not exit_program:
-    output, out_len = ss.get_output()    
+    output, out_len = ss.get_output()
     output_text.config(state=NORMAL)
     
     for o in output[output_widget_len : out_len]:
-      output_text.insert(END, "- " + o + "\n")  
+      output_text.insert(END, "- " + o + "\n")
 
     output_widget_len = out_len
     output_text.see("end")
@@ -162,7 +253,7 @@ output_update.start()
 ###################################
 
 ############ Config Page ############
-windows = ss.available_windows()
+windows = ss.get_available_windows()
 window_names = [x for x in windows.values()]
 
 langs = ss.get_available_translations()
@@ -267,8 +358,6 @@ def save_config(action):
       hide_profile_name_input()
       display_profiles()
 
-
-
 def validate_config():
   correct_values = True
   try:
@@ -324,55 +413,192 @@ def change_lang(e):
 def change_theme(t):
   ss.set_theme(clicked_theme.get())
 
-language_op_menu = OptionMenu(config_frame, clicked_lang, *langs, command=change_lang)
+# User Set Language
+language_op_menu = OptionMenu(
+  config_frame, 
+  clicked_lang, 
+  *langs, 
+  command=change_lang
+)
 language_op_menu.place(relx=0.75, rely=0.08)
-language_op_menu.config(bg=theme['CONFIG_BTN_BG'], activebackground=theme['CONFIG_BTN_BG'], highlightthickness=0)
-language_op_menu["menu"].config(bg=theme['CONFIG_BTN_BG'])
+language_op_menu.config(
+  bg=theme['CONFIG_BTN_BG'], 
+  activebackground=theme['CONFIG_BTN_BG'], 
+  highlightthickness=0
+)
+language_op_menu["menu"].config(
+  bg=theme['CONFIG_BTN_BG']
+)
 
-theme_op_menu = OptionMenu(config_frame, clicked_theme, *themes, command=change_theme)
+# User Set Theme
+theme_op_menu = OptionMenu(
+  config_frame, 
+  clicked_theme, 
+  *themes, 
+  command=change_theme
+)
 theme_op_menu.place(relx=0.82, rely=0.08)
-theme_op_menu.config(bg=theme['CONFIG_BTN_BG'], activebackground=theme['CONFIG_BTN_BG'], highlightthickness=0)
+theme_op_menu.config(
+  bg=theme['CONFIG_BTN_BG'], 
+  activebackground=theme['CONFIG_BTN_BG'], 
+  highlightthickness=0
+)
 theme_op_menu["menu"].config(bg=theme['CONFIG_BTN_BG'])
 
-config_window_id_label = Label(config_frame, text=gui_texts['window_id'], bg=theme['CONFIG_LABEL_BG'], fg=theme['CONFIG_LABEL_FG']).place(relx=0.05, rely=0.08)
+# User Set window ID
+config_window_id_label = Label(
+  config_frame, 
+  text=gui_texts['window_id'], 
+  bg=theme['CONFIG_LABEL_BG'], 
+  fg=theme['CONFIG_LABEL_FG']
+).place(relx=0.05, rely=0.08)
 config_window_id_op_menu = OptionMenu(config_frame, clicked_window, *window_names)
-config_window_id_op_menu.config(bg=theme['CONFIG_BTN_BG'], activebackground=theme['CONFIG_BTN_BG'], highlightthickness=0)
-config_window_id_op_menu["menu"].config(bg=theme['CONFIG_BTN_BG'])
+config_window_id_op_menu.config(
+  bg=theme['CONFIG_BTN_BG'], 
+  activebackground=theme['CONFIG_BTN_BG'], 
+  highlightthickness=0
+)
+config_window_id_op_menu["menu"].config(
+  bg=theme['CONFIG_BTN_BG']
+)
 config_window_id_op_menu.place(relx=0.28, rely=0.08)
 
-config_step_label = Label(config_frame, text=gui_texts['step'], bg=theme['CONFIG_LABEL_BG'], fg=theme['CONFIG_LABEL_FG']).place(relx=0.05, rely=0.08+0.08)
-config_step_entry = Entry(config_frame, bg=theme['CONFIG_ENTRY_BG'], fg=theme['CONFIG_ENTRY_FG'], borderwidth = 0)
-config_step_entry.place(relx=0.28, rely=0.08+0.08)
-config_step_validate_label = Label(config_frame, textvariable=step_validate, bg=theme['CONFIG_VALIDATE_LBL_BG'], fg=theme['CONFIG_VALIDATE_FG']).place(relx=0.43, rely=0.08+0.08)
+# User Set Step
+config_step_label = Label(
+  config_frame, 
+  text=gui_texts['step'], 
+  bg=theme['CONFIG_LABEL_BG'], 
+  fg=theme['CONFIG_LABEL_FG']
+).place(relx=0.05, rely=2*0.08)
+config_step_entry = Entry(
+  config_frame, 
+  bg=theme['CONFIG_ENTRY_BG'], 
+  fg=theme['CONFIG_ENTRY_FG'], 
+  borderwidth = 0
+)
+config_step_entry.place(relx=0.28, rely=2*0.08)
+config_step_validate_label = Label(
+  config_frame, 
+  textvariable=step_validate, 
+  bg=theme['CONFIG_VALIDATE_LBL_BG'], 
+  fg=theme['CONFIG_VALIDATE_FG']
+).place(relx=0.43, rely=2*0.08)
 
-config_ss_path_label = Label(config_frame, text=gui_texts['path'], bg=theme['CONFIG_LABEL_BG'], fg=theme['CONFIG_LABEL_FG']).place(relx=0.05, rely=0.08+0.08+0.08)
-config_ss_path_entry = Button(config_frame, text=f"{gui_texts['select_path']}!", command=set_path, bg=theme['CONFIG_BTN_BG'], activebackground=theme['CONFIG_ACTIVE_BTN_BG'], cursor=theme["CURSOR_ON_HOVER"])
-config_ss_path_entry.place(relx=0.28, rely=0.08+0.08+0.08)
+# User Set Path
+config_ss_path_label = Label(
+  config_frame, 
+  text=gui_texts['path'], 
+  bg=theme['CONFIG_LABEL_BG'], 
+  fg=theme['CONFIG_LABEL_FG']
+).place(relx=0.05, rely=3*0.08)
+config_ss_path_entry = Button(
+  config_frame, 
+  text=f"{gui_texts['select_path']}!", 
+  command=set_path, 
+  bg=theme['CONFIG_BTN_BG'], 
+  activebackground=theme['CONFIG_ACTIVE_BTN_BG'], 
+  cursor=theme["CURSOR_ON_HOVER"]
+)
+config_ss_path_entry.place(relx=0.28, rely=3*0.08)
 
-config_ss_current_path_label = Label(config_frame, textvariable=path, bg=theme['CONFIG_CURRENT_LBL_BG'], fg=theme['CONFIG_LABEL_FG']).place(relx=0.43, rely=0.08+0.08+0.08)
+config_ss_current_path_label = Label(
+  config_frame, 
+  textvariable=path, 
+  bg=theme['CONFIG_CURRENT_LBL_BG'], 
+  fg=theme['CONFIG_LABEL_FG']
+).place(relx=0.43, rely=3*0.08)
 
-config_diff_perc_label = Label(config_frame, text=f"{gui_texts['percentage_diff']}  [0.0; 100.0]", bg=theme['CONFIG_LABEL_BG'], fg=theme['CONFIG_LABEL_FG']).place(relx=0.05, rely=0.08+0.08+0.08+0.08)
-config_diff_perc_entry = Entry(config_frame, bg=theme['CONFIG_ENTRY_BG'], fg=theme['CONFIG_ENTRY_FG'], borderwidth = 0)
-config_diff_perc_entry.place(relx=0.28, rely=0.08+0.08+0.08+0.08)
-config_diff_perc_validate_label = Label(config_frame, textvariable=diff_perc_validate, bg=theme['CONFIG_VALIDATE_LBL_BG'], fg=theme['CONFIG_VALIDATE_FG']).place(relx=0.43, rely=0.08+0.08+0.08+0.08)
+# User Set Percentage Difference
+config_diff_perc_label = Label(
+  config_frame, 
+  text=gui_texts['percentage_diff'],
+  bg=theme['CONFIG_LABEL_BG'], 
+  fg=theme['CONFIG_LABEL_FG']
+).place(relx=0.05, rely=4*0.08)
+config_diff_perc_entry = Entry(
+  config_frame, 
+  bg=theme['CONFIG_ENTRY_BG'], 
+  fg=theme['CONFIG_ENTRY_FG'], 
+  borderwidth = 0
+)
+config_diff_perc_entry.place(relx=0.28, rely=4*0.08)
+config_diff_perc_validate_label = Label(
+  config_frame, 
+  textvariable=diff_perc_validate, 
+  bg=theme['CONFIG_VALIDATE_LBL_BG'], 
+  fg=theme['CONFIG_VALIDATE_FG']
+).place(relx=0.43, rely=4*0.08)
 
-config_ss_coords_label = Label(config_frame, text=gui_texts['crop_screenshot'], bg=theme['CONFIG_LABEL_BG'], fg=theme['CONFIG_LABEL_FG']).place(relx=0.05, rely=0.08+0.08+0.08+0.08+0.08)
-config_ss_coords_checkbutton = Checkbutton(config_frame, text=gui_texts['crop'], variable=crop_ss, bg=theme['CONFIG_LABEL_BG'], fg=theme['CONFIG_LABEL_FG'], activebackground=theme['CONFIG_LABEL_BG']).place(relx=0.18, rely=0.08+0.08+0.08+0.08+0.08)
-config_ss_coords_button = Button(config_frame, text=f"{gui_texts['set_crop_coords']}!", command=set_ss_coords, bg=theme['CONFIG_BTN_BG'], activebackground=theme['CONFIG_ACTIVE_BTN_BG'], cursor=theme["CURSOR_ON_HOVER"]).place(relx=0.28, rely=0.08+0.08+0.08+0.08+0.08)
-config_ss_coords_validate_label = Label(config_frame, textvariable=coords_validate, bg=theme['CONFIG_VALIDATE_LBL_BG'], fg=theme['CONFIG_VALIDATE_FG']).place(relx=0.28, rely=0.08+0.08+0.08+0.08+0.08+0.06)
-config_ss_current_coords_tl_label = Label(config_frame, textvariable=coords_tl, bg=theme['CONFIG_CURRENT_LBL_BG'], fg=theme['CONFIG_LABEL_FG']).place(relx=0.55, rely=0.08+0.08+0.08+0.08+0.08)
-config_ss_current_coords_br_label = Label(config_frame, textvariable=coords_br, bg=theme['CONFIG_CURRENT_LBL_BG'], fg=theme['CONFIG_LABEL_FG']).place(relx=0.68, rely=0.08+0.08+0.08+0.08+0.08)
+# User Set crop image coordinates
+config_ss_coords_label = Label(
+  config_frame, 
+  text=gui_texts['crop_screenshot'], 
+  bg=theme['CONFIG_LABEL_BG'], 
+  fg=theme['CONFIG_LABEL_FG']
+).place(relx=0.05, rely=5*0.08)
+config_ss_coords_checkbutton = Checkbutton(
+  config_frame, 
+  text=gui_texts['crop'], 
+  variable=crop_ss, 
+  bg=theme['CONFIG_LABEL_BG'], 
+  fg=theme['CONFIG_LABEL_FG'], 
+  activebackground=theme['CONFIG_LABEL_BG']
+).place(relx=0.18, rely=5*0.08)
+config_ss_coords_button = Button(
+  config_frame, 
+  text=f"{gui_texts['set_crop_coords']}!", 
+  command=set_ss_coords, 
+  bg=theme['CONFIG_BTN_BG'], 
+  activebackground=theme['CONFIG_ACTIVE_BTN_BG'], 
+  cursor=theme["CURSOR_ON_HOVER"]
+).place(relx=0.28, rely=5*0.08)
+config_ss_coords_validate_label = Label(
+  config_frame, 
+  textvariable=coords_validate, 
+  bg=theme['CONFIG_VALIDATE_LBL_BG'], 
+  fg=theme['CONFIG_VALIDATE_FG']
+).place(relx=0.28, rely=5*0.08+0.06)
+config_ss_current_coords_tl_label = Label(
+  config_frame, 
+  textvariable=coords_tl, 
+  bg=theme['CONFIG_CURRENT_LBL_BG'], 
+  fg=theme['CONFIG_LABEL_FG']
+).place(relx=0.55, rely=5*0.08)
+config_ss_current_coords_br_label = Label(
+  config_frame, 
+  textvariable=coords_br, 
+  bg=theme['CONFIG_CURRENT_LBL_BG'], 
+  fg=theme['CONFIG_LABEL_FG']
+).place(relx=0.68, rely=5*0.08)
 
-config_save = Button(config_frame, text=gui_texts['save'], command=lambda action="save": save_config(action), bg=theme['CONFIG_SAVE_BTN_BG'], activebackground=theme['CONFIG_ACTIVE_SAVE_BTN_BG'], cursor=theme["CURSOR_ON_HOVER"])
-config_save.place(relx=0.28, rely=0.08+0.08+0.08+0.08+0.08+0.08+0.08+0.08)
+# User Save config
+config_save = Button(
+  config_frame, 
+  text=gui_texts['save'], 
+  command=lambda action="save": save_config(action), 
+  bg=theme['CONFIG_SAVE_BTN_BG'], 
+  activebackground=theme['CONFIG_ACTIVE_SAVE_BTN_BG'], 
+  cursor=theme["CURSOR_ON_HOVER"]
+)
+config_save.place(relx=0.28, rely=8*0.08)
 
-profile_name = Entry(config_frame, bg=theme['CONFIG_ENTRY_BG'], fg=theme['CONFIG_ENTRY_FG'], borderwidth = 0)
+save_file_success_info = Label(
+  config_frame, 
+  textvariable=save_file_success, 
+  bg=theme['CONFIG_VALIDATE_LBL_BG'], 
+  fg=theme['CONFIG_LABEL_FG']
+).place(relx=0.28, rely=9*0.08)
 
-save_file_success_info = Label(config_frame, textvariable=save_file_success, bg=theme['CONFIG_VALIDATE_LBL_BG'], fg=theme['CONFIG_LABEL_FG']).place(relx=0.28, rely=0.08+0.08+0.08+0.08+0.08+0.08+0.08+0.08+0.08)
-
+# User set profile name
+profile_name = Entry(
+  config_frame, 
+  bg=theme['CONFIG_ENTRY_BG'], 
+  fg=theme['CONFIG_ENTRY_FG'], 
+  borderwidth = 0
+)
 
 def show_profile_name_input(text):
-  profile_name.place(relx=0.35, rely=0.08+0.08+0.08+0.08+0.08+0.08+0.08+0.08)
+  profile_name.place(relx=0.35, rely=8*0.08)
   profile_name.delete(0, END)
   profile_name.insert(0, text)
 
@@ -424,7 +650,14 @@ def display_profiles():
     profile_button[j].place(rely=i, relx=1, anchor=E)
     i += 0.046
 
-  add_profile_button = Button(config_frame, text=u"\u2795", command=new_profile_form, bg=theme['CONFIG_ADD_PROF_BG'], activebackground=theme['CONFIG_ACTIVE_ADD_PROF_BG'], cursor=theme["CURSOR_ON_HOVER"])
+  add_profile_button = Button(
+    config_frame, 
+    text=u"\u2795", 
+    command=new_profile_form, 
+    bg=theme['CONFIG_ADD_PROF_BG'], 
+    activebackground=theme['CONFIG_ACTIVE_ADD_PROF_BG'], 
+    cursor=theme["CURSOR_ON_HOVER"]
+  )
   add_profile_button.place(rely=0.08, relx=1, anchor=E)
   highlight_current_profile()
   
@@ -437,10 +670,23 @@ def delete_profile():
     display_profiles()
     set_profile((ss.get_profiles())[0])
 
+rename_profile = Button(
+  config_frame, 
+  text=gui_texts['rename_profile'], 
+  command=rename_profile, 
+  bg=theme['CONFIG_RENAME_PROGILE_BTN_BG'], 
+  activebackground=theme['CONFIG_ACTIVE_RENAME_PROGILE_BTN_BG'], 
+  cursor=theme["CURSOR_ON_HOVER"]
+).place(relx=1, rely=1, anchor=SE)
 
-rename_profile = Button(config_frame, text=gui_texts['rename_profile'], command=rename_profile, bg=theme['CONFIG_RENAME_PROGILE_BTN_BG'], activebackground=theme['CONFIG_ACTIVE_RENAME_PROGILE_BTN_BG'], cursor=theme["CURSOR_ON_HOVER"]).place(relx=1, rely=1, anchor=SE)
-delete_profile = Button(config_frame, text=gui_texts['delete_profile'], command=delete_profile, bg=theme['CONFIG_DEL_PROFILE_BTN_BG'], activebackground=theme['CONFIG_ACTIVE_DEL_PROFILE_BTN_BG'], cursor=theme["CURSOR_ON_HOVER"]).place(relx=1, rely=0.955, anchor=SE)
-
+delete_profile = Button(
+  config_frame, 
+  text=gui_texts['delete_profile'], 
+  command=delete_profile, 
+  bg=theme['CONFIG_DEL_PROFILE_BTN_BG'], 
+  activebackground=theme['CONFIG_ACTIVE_DEL_PROFILE_BTN_BG'], 
+  cursor=theme["CURSOR_ON_HOVER"]
+).place(relx=1, rely=0.955, anchor=SE)
 
 ###################################
 
@@ -453,17 +699,77 @@ DESC_LBL_FONT = ("Arial", 13)
 DESC_WHAT_LBL_X = 0.3
 DESC_WHAT_LBL_FONT = ("Arial", 10)
 
-desc_window_id_lbl = Label(desc_frame, text=gui_texts['window_id'], font=DESC_LBL_FONT, bg=theme['DESC_LBL_BG'], fg=theme['DESC_LBL_FG']).place(relx=DESC_LBL_X, rely=DESC_LBL_Y, anchor=E)
-desc_step_lbl = Label(desc_frame, text=gui_texts['step'], font=DESC_LBL_FONT, bg=theme['DESC_LBL_BG'], fg=theme['DESC_LBL_FG']).place(relx=DESC_LBL_X, rely=DESC_LBL_Y + 1*0.18, anchor=E)
-desc_path_lbl = Label(desc_frame, text=gui_texts['path'], font=DESC_LBL_FONT, bg=theme['DESC_LBL_BG'], fg=theme['DESC_LBL_FG']).place(relx=DESC_LBL_X, rely=DESC_LBL_Y + 2*0.18, anchor=E)
-desc_diff_perc_lbl = Label(desc_frame, text=gui_texts['percentage_diff'], font=DESC_LBL_FONT, bg=theme['DESC_LBL_BG'], fg=theme['DESC_LBL_FG']).place(relx=DESC_LBL_X, rely=DESC_LBL_Y + 3*0.18, anchor=E)
-desc_coords_lbl = Label(desc_frame, text=gui_texts['crop_screenshot'], font=DESC_LBL_FONT, bg=theme['DESC_LBL_BG'], fg=theme['DESC_LBL_FG']).place(relx=DESC_LBL_X, rely=DESC_LBL_Y + 4*0.18, anchor=E)
+desc_window_id_lbl = Label(
+  desc_frame, 
+  text=gui_texts['window_id'], 
+  font=DESC_LBL_FONT, 
+  bg=theme['DESC_LBL_BG'], 
+  fg=theme['DESC_LBL_FG']
+).place(relx=DESC_LBL_X, rely=DESC_LBL_Y, anchor=E)
+desc_step_lbl = Label(
+  desc_frame, 
+  text=gui_texts['step'], 
+  font=DESC_LBL_FONT, 
+  bg=theme['DESC_LBL_BG'], 
+  fg=theme['DESC_LBL_FG']
+).place(relx=DESC_LBL_X, rely=DESC_LBL_Y + 1*0.18, anchor=E)
+desc_path_lbl = Label(
+  desc_frame, 
+  text=gui_texts['path'], 
+  font=DESC_LBL_FONT, 
+  bg=theme['DESC_LBL_BG'], 
+  fg=theme['DESC_LBL_FG']
+).place(relx=DESC_LBL_X, rely=DESC_LBL_Y + 2*0.18, anchor=E)
+desc_diff_perc_lbl = Label(
+  desc_frame, 
+  text=gui_texts['percentage_diff'], 
+  font=DESC_LBL_FONT, 
+  bg=theme['DESC_LBL_BG'], 
+  fg=theme['DESC_LBL_FG']
+).place(relx=DESC_LBL_X, rely=DESC_LBL_Y + 3*0.18, anchor=E)
+desc_coords_lbl = Label(
+  desc_frame, 
+  text=gui_texts['crop_screenshot'], 
+  font=DESC_LBL_FONT, 
+  bg=theme['DESC_LBL_BG'], 
+  fg=theme['DESC_LBL_FG']
+).place(relx=DESC_LBL_X, rely=DESC_LBL_Y + 4*0.18, anchor=E)
 
-desc_what_window_id_lbl = Label(desc_frame, text=gui_texts['desc_what_window_id'], font=DESC_WHAT_LBL_FONT, bg=theme['DESC_WHAT_LBL_BG'], fg=theme['DESC_WHAT_LBL_FG']).place(relx=DESC_WHAT_LBL_X, rely=DESC_LBL_Y, anchor=W)
-desc_what_step_lbl = Label(desc_frame, text=gui_texts['desc_what_step'], font=DESC_WHAT_LBL_FONT, bg=theme['DESC_WHAT_LBL_BG'], fg=theme['DESC_WHAT_LBL_FG'], justify=LEFT).place(relx=DESC_WHAT_LBL_X, rely=DESC_LBL_Y + 1*0.18, anchor=W)
-desc_what_path_lbl = Label(desc_frame, text=gui_texts['desc_what_path'], font=DESC_WHAT_LBL_FONT, bg=theme['DESC_WHAT_LBL_BG'], fg=theme['DESC_WHAT_LBL_FG'], justify=LEFT).place(relx=DESC_WHAT_LBL_X, rely=DESC_LBL_Y + 2*0.18, anchor=W)
-desc_what_diff_perc_lbl = Label(desc_frame, text=gui_texts['desc_what_diff_perc'], font=DESC_WHAT_LBL_FONT, bg=theme['DESC_WHAT_LBL_BG'], fg=theme['DESC_WHAT_LBL_FG'], justify=LEFT).place(relx=DESC_WHAT_LBL_X, rely=DESC_LBL_Y + 3*0.18, anchor=W)
-desc_what_coords_lbl = Label(desc_frame, text=gui_texts['desc_what_coords'], font=DESC_WHAT_LBL_FONT, bg=theme['DESC_WHAT_LBL_BG'], fg=theme['DESC_WHAT_LBL_FG'], justify=LEFT).place(relx=DESC_WHAT_LBL_X, rely=DESC_LBL_Y + 4*0.18, anchor=W)
+desc_what_window_id_lbl = Label(
+  desc_frame, 
+  text=gui_texts['desc_what_window_id'], 
+  font=DESC_WHAT_LBL_FONT, 
+  bg=theme['DESC_WHAT_LBL_BG'], 
+  fg=theme['DESC_WHAT_LBL_FG']
+).place(relx=DESC_WHAT_LBL_X, rely=DESC_LBL_Y, anchor=W)
+desc_what_step_lbl = Label(
+  desc_frame, 
+  text=gui_texts['desc_what_step'], 
+  font=DESC_WHAT_LBL_FONT, 
+  bg=theme['DESC_WHAT_LBL_BG'], 
+  fg=theme['DESC_WHAT_LBL_FG'
+], justify=LEFT).place(relx=DESC_WHAT_LBL_X, rely=DESC_LBL_Y + 1*0.18, anchor=W)
+desc_what_path_lbl = Label(
+  desc_frame, 
+  text=gui_texts['desc_what_path'], 
+  font=DESC_WHAT_LBL_FONT, 
+  bg=theme['DESC_WHAT_LBL_BG'], 
+  fg=theme['DESC_WHAT_LBL_FG'
+], justify=LEFT).place(relx=DESC_WHAT_LBL_X, rely=DESC_LBL_Y + 2*0.18, anchor=W)
+desc_what_diff_perc_lbl = Label(
+  desc_frame, 
+  text=gui_texts['desc_what_diff_perc'], 
+  font=DESC_WHAT_LBL_FONT, 
+  bg=theme['DESC_WHAT_LBL_BG'], 
+  fg=theme['DESC_WHAT_LBL_FG'
+], justify=LEFT).place(relx=DESC_WHAT_LBL_X, rely=DESC_LBL_Y + 3*0.18, anchor=W)
+desc_what_coords_lbl = Label(
+  desc_frame, 
+  text=gui_texts['desc_what_coords'], 
+  font=DESC_WHAT_LBL_FONT, 
+  bg=theme['DESC_WHAT_LBL_BG'], 
+  fg=theme['DESC_WHAT_LBL_FG'
+], justify=LEFT).place(relx=DESC_WHAT_LBL_X, rely=DESC_LBL_Y + 4*0.18, anchor=W)
 
 ##########################################
 
@@ -471,8 +777,21 @@ desc_what_coords_lbl = Label(desc_frame, text=gui_texts['desc_what_coords'], fon
 def open_url(url):
   webbrowser.open_new(url)
 
-info_author_label = Label(info_frame, text=gui_texts['author'], font=("Arial", 35), bg=theme['MAIN_BG'], fg=theme['INFO_AUTHOR_LBL_FG']).place(relx=0.5, rely=0.2, anchor=CENTER)
-info_author_link_label = Label(info_frame, text="Github", cursor="hand2", font="Arial 20 underline", bg=theme['MAIN_BG'], fg=theme['INFO_AUTHOR_LINK_LBL_FG'])
+info_author_label = Label(
+  info_frame, 
+  text=gui_texts['author'], 
+  font=("Arial", 35), 
+  bg=theme['MAIN_BG'], 
+  fg=theme['INFO_AUTHOR_LBL_FG']
+).place(relx=0.5, rely=0.2, anchor=CENTER)
+info_author_link_label = Label(
+  info_frame, 
+  text="Github", 
+  cursor="hand2", 
+  font="Arial 20 underline", 
+  bg=theme['MAIN_BG'], 
+  fg=theme['INFO_AUTHOR_LINK_LBL_FG']
+)
 info_author_link_label.place(relx=0.5, rely=0.4, anchor=CENTER)
 info_author_link_label.bind("<Button-1>", lambda e: open_url("https://github.com/fzwolinski"))
 
