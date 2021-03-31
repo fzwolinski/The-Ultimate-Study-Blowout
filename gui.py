@@ -392,20 +392,43 @@ def validate_config():
   return correct_values
 
 def clear_config_status():
-    step_validate.set("")
-    diff_perc_validate.set("")
-    save_file_success.set("")
-    coords_validate.set("")
+  step_validate.set("")
+  diff_perc_validate.set("")
+  save_file_success.set("")
+  coords_validate.set("")
 
-def set_ss_coords():
-  try:
-    current_window_id = int(list(windows.keys())[list(windows.values()).index(clicked_window.get())])
-    coord_top_left, coord_bottom_right = ss.set_ss_coords(current_window_id)
-    coords_validate.set(gui_texts['good'])
-    coords_tl.set(str(coord_top_left))
-    coords_br.set(str(coord_bottom_right))
-  except:
+def check_for_coords_thread():
+  global set_coords_thread_time
+  current_window_id = int(list(windows.keys())[list(windows.values()).index(clicked_window.get())])
+  ss.set_ss_coords(current_window_id)
+  while not ss.thread_stop_event.is_set():
+    if (time.time() - set_coords_thread_time) > 30:
+      break
+    time.sleep(2)
+  
+  config_ss_coords_button['state'] = "normal"
+  config_save['state'] = "normal"
+  
+  if not (ss.top_left_coords and ss.bottom_right_coords):
     coords_validate.set(gui_texts['not_set'])
+    return False
+
+  coord_top_left, coord_bottom_right = ss.top_left_coords, ss.bottom_right_coords
+  coords_validate.set(gui_texts['good'])
+  coords_tl.set(str(coord_top_left))
+  coords_br.set(str(coord_bottom_right))
+  
+def set_ss_coords():
+  global set_coords_thread_time
+  try:
+    set_coords = threading.Thread(target=check_for_coords_thread)
+    set_coords.setDaemon(True)
+    set_coords_thread_time = time.time()
+    set_coords.start()
+    config_ss_coords_button['state'] = "disable"
+    config_save['state'] = "disable"
+  except:
+    pass
 
 def change_lang(e):
   ss.set_language(clicked_lang.get())
@@ -551,7 +574,8 @@ config_ss_coords_button = Button(
   bg=theme['CONFIG_BTN_BG'], 
   activebackground=theme['CONFIG_ACTIVE_BTN_BG'], 
   cursor=theme["CURSOR_ON_HOVER"]
-).place(relx=0.28, rely=5*0.08)
+)
+config_ss_coords_button.place(relx=0.28, rely=5*0.08)
 config_ss_coords_validate_label = Label(
   config_frame, 
   textvariable=coords_validate, 

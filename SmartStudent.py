@@ -358,6 +358,7 @@ class SmartStudent:
   def set_ss_coords(self, curr_win_id):
     self.top_left_coords = {}
     self.bottom_right_coords = {}
+    self.thread_stop_event = threading.Event()
 
     def on_press(key):
       if key == keyboard.Key.f1:
@@ -372,34 +373,44 @@ class SmartStudent:
           "y": pg.position()[1]
         }
         self.bottom_right_coords = bottom_right
-      if ((self.top_left_coords and self.bottom_right_coords) or 
-           key == keyboard.Key.esc):
+      if key == keyboard.Key.esc:
+        self.thread_stop_event.set()
+        return False # Stop Listener
+      if self.top_left_coords and self.bottom_right_coords:
+
+        x1, y1, x2, y2 = win32gui.GetWindowRect(curr_win_id)
+    
+        if self.top_left_coords and self.bottom_right_coords:
+          # Check if TOP_LEFT corner is above BOTTOM_RIGHT corner of rectangle
+          if not ((self.top_left_coords['x'] < self.bottom_right_coords['x']) and 
+                  (self.top_left_coords['y'] < self.bottom_right_coords['y'])):
+            self.top_left_coords = {}
+            self.bottom_right_coords = {}
+            self.thread_stop_event.set()
+            return False # Stop listener
+
+          # Check if selected coords fit the window area
+          if (self.top_left_coords['x'] < x1 or self.bottom_right_coords['x'] > x2 or
+              self.top_left_coords['y'] < y1 or self.bottom_right_coords['y'] > y2):
+            self.top_left_coords = {}
+            self.bottom_right_coords = {}
+            self.thread_stop_event.set()
+            return False # Stop listener
+
+          # If coords are correct, we want to store window position
+          # in order to shift ss area while moving window
+          self.config_profile['window_pos']['x'] = x1
+          self.config_profile['window_pos']['y'] = y1
+
+          self.config_profile['top_left_coords'] = self.top_left_coords
+          self.config_profile['bottom_right_coords'] = self.bottom_right_coords
+
+          self.thread_stop_event.set()
+
         return False # Stop listener
 
     l1 = keyboard.Listener(on_press=on_press)
     l1.start()
-    l1.join()
-
-    x1, y1, x2, y2 = win32gui.GetWindowRect(curr_win_id)
-    
-    if self.top_left_coords and self.bottom_right_coords:
-      # Check if TOP_LEFT corner is above BOTTOM_RIGHT corner of rectangle
-      if not ((self.top_left_coords['x'] < self.bottom_right_coords['x']) and 
-              (self.top_left_coords['y'] < self.bottom_right_coords['y'])):
-        return -1
-
-      # Check if selected coords fit the window area
-      if (self.top_left_coords['x'] < x1 or self.bottom_right_coords['x'] > x2 or
-          self.top_left_coords['y'] < y1 or self.bottom_right_coords['y'] > y2):
-        return -1
-
-      # If coords are correct, we want to store window position
-      # in order to shift ss area while moving window
-      self.config_profile['window_pos']['x'] = x1
-      self.config_profile['window_pos']['y'] = y1
-
-      return self.top_left_coords, self.bottom_right_coords
-    return -1
 
   def get_rel_crop_coords(self, tl_x, tl_y):
     tl_mouse_x = self.config_profile.get("top_left_coords").get("x")
