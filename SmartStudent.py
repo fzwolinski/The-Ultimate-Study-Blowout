@@ -356,11 +356,13 @@ class SmartStudent:
       return 0
 
   def set_ss_coords(self, curr_win_id):
+    global set_coords_thread_start_time
     self.top_left_coords = {}
     self.bottom_right_coords = {}
     self.thread_stop_event = threading.Event()
 
     def on_press(key):
+      global set_coords_thread_start_time
       if key == keyboard.Key.f1:
         top_left = {
           "x": pg.position()[0],
@@ -373,6 +375,10 @@ class SmartStudent:
           "y": pg.position()[1]
         }
         self.bottom_right_coords = bottom_right
+      if key:
+        if (time.time() - set_coords_thread_start_time) > 30:
+          self.thread_stop_event.set()
+          return False # Stop Listener
       if key == keyboard.Key.esc:
         self.thread_stop_event.set()
         return False # Stop Listener
@@ -410,6 +416,7 @@ class SmartStudent:
         return False # Stop listener
 
     l1 = keyboard.Listener(on_press=on_press)
+    set_coords_thread_start_time = time.time()
     l1.start()
 
   def get_rel_crop_coords(self, tl_x, tl_y):
