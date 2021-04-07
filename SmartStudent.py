@@ -146,7 +146,6 @@ class SmartStudent:
           self.set_active_profile("default")
     except:
       # Error opening config.json
-      self.output.append(self.outputs['file_open_err'])
       # Save default scheme to config file and load default profile
       self.config = self.get_default_config()
       self.config_profile = self.config['profile']['default']      
