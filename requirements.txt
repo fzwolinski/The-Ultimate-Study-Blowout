@@ -1,0 +1,6 @@
+pywin32==300
+PyAutoGUI==0.9.52
+imgcompare==2.0.1
+pynput==1.7.3
+PyGetWindow==0.0.9
+Pillow==8.2.0
