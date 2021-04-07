@@ -338,6 +338,7 @@ def save_config(action):
     "step": int(config_step_entry.get()),
     "ss_path": path.get(),
     "diff_percentage": float(config_diff_perc_entry.get()),
+    "window_pos": ss.config_profile["window_pos"],
     "top_left_coords": eval(coords_tl.get()),
     "bottom_right_coords": eval(coords_br.get()),
     "crop_img": True if crop_ss.get() else False
