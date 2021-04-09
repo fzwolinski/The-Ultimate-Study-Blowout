@@ -12,7 +12,8 @@ import threading
 from pynput import keyboard
 import pyautogui as pg
 
-class SmartStudent:
+# TUSB - The Ultimate School Blowout
+class TUSB:
   def __init__(self):
     # Gui output messages
     self.output = []
