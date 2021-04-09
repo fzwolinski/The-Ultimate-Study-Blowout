@@ -1,4 +1,4 @@
-# 🏫 The Ultimate Study
+# 🏫 The Ultimate Study Blowout
 
 **The ultimate study blowout** is a GUI program that saves the lives of all students.
 <br />TUSB takes screenshots of the presentation/lecture slides without your interference, so that you can go keep sleeping in peace.
