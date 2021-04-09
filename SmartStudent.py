@@ -63,7 +63,7 @@ class SmartStudent:
     """
     Allows to change current language of application (from GUI)
 
-    :param lang: language abbreviation e.g. "en", "pl
+    :param lang: language abbreviation e.g. "en", "pl"
     :return:
         True if succeeded
         False if failed
