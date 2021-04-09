@@ -66,8 +66,17 @@ This could cause serious injury.
 ## 🖼️ Program Preview
 
 ![Home Light](https://github.com/fzwolinski/The-Ultimate-Study-Blowout/blob/master/tusb_preview/home_light.png)
+
+<br />
+
 ![Config Light](https://github.com/fzwolinski/The-Ultimate-Study-Blowout/blob/master/tusb_preview/config_light.png)
+
+<br />
+
 ![Home Dark](https://github.com/fzwolinski/The-Ultimate-Study-Blowout/blob/master/tusb_preview/home_dark.png)
+
+<br />
+
 ![Config Dark](https://github.com/fzwolinski/The-Ultimate-Study-Blowout/blob/master/tusb_preview/config_dark.png)
 
 <br />
