@@ -1,23 +1,23 @@
 from tkinter import filedialog
 from tkinter import *
 from tkinter import font as tkFont
-from TUSB import *
+from SmartStudent import *
 import json
 import time
 import webbrowser
 import threading
 
-tusb = TUSB()
+ss = SmartStudent()
 
 # All gui texts in specified lang
 gui_texts = {}
 
 # Load translation
-with open(f"langs/{tusb.config['lang']}.json") as f:
+with open(f"langs/{ss.config['lang']}.json") as f:
   gui_texts = json.load(f)['gui']
 
 # Load theme
-with open(f"themes/{tusb.config['theme']}.json") as f:
+with open(f"themes/{ss.config['theme']}.json") as f:
   theme = json.load(f)
 
 
@@ -176,7 +176,7 @@ def take_screenshot():
   global ss_click_time
   if (time.perf_counter() - ss_click_time) > 2:
     ss_click_time = time.perf_counter()
-    tusb.take_test_screenshot()
+    ss.take_test_screenshot()
 
 def run_program():
   """
@@ -195,7 +195,7 @@ def run_program():
       fg=theme['STOP_PROGRAM_BTN_FG']
     )
     # Run main program loop
-    tusb.run()
+    ss.run()
     # Extend output field
     output_text.place(
       rely=1+0.01, 
@@ -214,7 +214,7 @@ def run_program():
       fg=theme['RUN_PROGRAM_BTN_FG']
     )
     # Stop main program loop
-    tusb.stop_program()
+    ss.stop_program()
     # Shrink output field
     output_text.place(
       rely=1+0.01, 
@@ -288,7 +288,7 @@ def update_output():
   
   while not exit_program:
     # get output, and output lenght from class object
-    output, out_len = tusb.get_output()
+    output, out_len = ss.get_output()
     # set output field "insertable"
     output_text.config(state=NORMAL)
     
@@ -314,11 +314,11 @@ output_update.start()
 ###################################
 
 ############ Config Page ############
-windows = tusb.get_available_windows()
+windows = ss.get_available_windows()
 window_names = [x for x in windows.values()]
 
-langs = tusb.get_available_translations()
-themes = tusb.get_available_themes()
+langs = ss.get_available_translations()
+themes = ss.get_available_themes()
 
 # Config inputs
 clicked_lang = StringVar()
@@ -340,32 +340,32 @@ def insert_config_values():
   Inserts all current config values to config view inputs
   """
   # Language
-  clicked_lang.set(tusb.config["lang"])
+  clicked_lang.set(ss.config["lang"])
 
   # Theme
-  clicked_theme.set(tusb.config["theme"])
+  clicked_theme.set(ss.config["theme"])
   
   # Window ID
-  if str(tusb.config_profile['window_id']) in windows.keys():
-    clicked_window.set(windows[str(tusb.config_profile['window_id'])])
+  if str(ss.config_profile['window_id']) in windows.keys():
+    clicked_window.set(windows[str(ss.config_profile['window_id'])])
   else:
     clicked_window.set(window_names[0])
 
   # Step
   config_step_entry.delete(0, END)
-  config_step_entry.insert(0, tusb.config_profile['step'])
+  config_step_entry.insert(0, ss.config_profile['step'])
   
   # Path
-  path.set(tusb.config_profile['ss_path'])
+  path.set(ss.config_profile['ss_path'])
 
   # Percentage difference
   config_diff_perc_entry.delete(0, END)
-  config_diff_perc_entry.insert(0, tusb.config_profile['diff_percentage'])
+  config_diff_perc_entry.insert(0, ss.config_profile['diff_percentage'])
 
   # Crop screenshot
-  crop_ss.set(1 if tusb.config_profile['crop_img'] else 0)
-  coords_tl.set(str(tusb.config_profile.get("top_left_coords")))
-  coords_br.set(str(tusb.config_profile.get("bottom_right_coords")))
+  crop_ss.set(1 if ss.config_profile['crop_img'] else 0)
+  coords_tl.set(str(ss.config_profile.get("top_left_coords")))
+  coords_br.set(str(ss.config_profile.get("bottom_right_coords")))
 
 def clear_config_values():
   """
@@ -419,14 +419,14 @@ def save_config(action):
     "step": int(config_step_entry.get()),
     "ss_path": path.get(),
     "diff_percentage": float(config_diff_perc_entry.get()),
-    "window_pos": tusb.config_profile["window_pos"],
+    "window_pos": ss.config_profile["window_pos"],
     "top_left_coords": eval(coords_tl.get()),
     "bottom_right_coords": eval(coords_br.get()),
     "crop_img": True if crop_ss.get() else False
   }
   # Save config/profile (Update)
   if action == "save":
-    if tusb.update_config_profile(tusb.config['current_profile'], new_config):
+    if ss.update_config_profile(ss.config['current_profile'], new_config):
       # Profile updated, display success msg
       save_file_success.set(f"{gui_texts['saved']}!")
     else:
@@ -434,12 +434,12 @@ def save_config(action):
       save_file_success.set(f"{gui_texts['error']}!")
   # Create new profile
   elif action == "add":
-    if tusb.create_new_profile(profile_name.get(), new_config):
+    if ss.create_new_profile(profile_name.get(), new_config):
       # Update profiles list
       display_profiles()
   # Rename profile
   elif action == "rename":
-    if tusb.rename_profile(tusb.config['current_profile'], profile_name.get()):
+    if ss.rename_profile(ss.config['current_profile'], profile_name.get()):
       hide_profile_name_input()
       # Update profiles list
       display_profiles()
@@ -507,12 +507,12 @@ def check_for_coords_thread():
   # Get current window ID
   current_window_id = int(list(windows.keys())[list(windows.values()).index(clicked_window.get())])
   # Call method to set ss coords
-  tusb.set_ss_coords(current_window_id)
+  ss.set_ss_coords(current_window_id)
   
   # Loop break means coords has been set
   # Doesn't matter if they are correct or incorrect
   # After 30 seconds, stop listening for coords
-  while not tusb.thread_stop_event.is_set():
+  while not ss.thread_stop_event.is_set():
     if (time.time() - set_coords_thread_time) > 30:
       break
     time.sleep(2)
@@ -524,12 +524,12 @@ def check_for_coords_thread():
   
   # Check if coords has been set correctly
   # If not, display error message
-  if not (tusb.top_left_coords and tusb.bottom_right_coords):
+  if not (ss.top_left_coords and ss.bottom_right_coords):
     coords_validate.set(gui_texts['not_set'])
     return False
 
   # Get correct coords and display them in GUI
-  coord_top_left, coord_bottom_right = tusb.top_left_coords, tusb.bottom_right_coords
+  coord_top_left, coord_bottom_right = ss.top_left_coords, ss.bottom_right_coords
   coords_validate.set(gui_texts['good'])
   coords_tl.set(str(coord_top_left))
   coords_br.set(str(coord_bottom_right))
@@ -559,7 +559,7 @@ def change_lang(e):
 
   :param e: lang to be set. e.g "pl", "en"
   """
-  tusb.set_language(clicked_lang.get())
+  ss.set_language(clicked_lang.get())
 
 def change_theme(t):
   """
@@ -567,7 +567,7 @@ def change_theme(t):
 
   :param t: theme to be set. e.g "dark", "light"
   """
-  tusb.set_theme(clicked_theme.get())
+  ss.set_theme(clicked_theme.get())
 
 # User Set Language
 language_op_menu = OptionMenu(
@@ -779,7 +779,7 @@ def highlight_current_profile():
   # Loop throught every profile button and
   # change bg of current one
   for p in profile_button:
-    if p['text'] == tusb.config["current_profile"]:
+    if p['text'] == ss.config["current_profile"]:
       p.configure(bg=theme['CONFIG_CURRENT_PROF_BG'])
     else:
       p.configure(bg=theme['CONFIG_PROF_BG'])
@@ -790,7 +790,7 @@ def set_profile(profile):
   
   :param profile: profile to be set to active
   """
-  tusb.set_active_profile(profile)
+  ss.set_active_profile(profile)
   highlight_current_profile()
   hide_profile_name_input()
   # Insert new profiles values into inputs
@@ -828,7 +828,7 @@ def display_profiles():
   profile_button.clear()
 
   # Get all available profiles
-  config_profiles = list(tusb.config['profile'].keys())
+  config_profiles = list(ss.config['profile'].keys())
 
   i = 0.18 # i = "y" position of button
   # Loop throught all available profiles and display them
@@ -863,18 +863,18 @@ def rename_profile():
   Displays profile name input and 
   changes "Save profile" btn action to "Rename profile" 
   """
-  show_profile_name_input(tusb.config['current_profile'])
+  show_profile_name_input(ss.config['current_profile'])
   config_save.configure(command=lambda action="rename": save_config(action))
 
 def delete_profile():
   """
   Calls deleting profile method
   """
-  if tusb.delete_profile(tusb.config['current_profile']):
+  if ss.delete_profile(ss.config['current_profile']):
     # Display available profiles after delete
     display_profiles()
     # Set first available profile as active
-    set_profile((tusb.get_profiles())[0])
+    set_profile((ss.get_profiles())[0])
 
 rename_profile = Button(
   config_frame, 
@@ -1014,7 +1014,7 @@ def on_window_close():
   Stops main program loop and destroys GUI root object
   """
   exit_program = True
-  tusb.stop_program()
+  ss.stop_program()
   root.destroy()
 
 # Before window close, call on_window_close() function
